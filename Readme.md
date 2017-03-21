@@ -1,7 +1,7 @@
 # Личный проект «Кекстаграм» [![Build status][travis-image]][travis-url]
 
 * Студент: [Екатерина Анплитова](https://up.htmlacademy.ru/javascript/9/user/82969).
-* Наставник: `Неизвестно`.
+* Наставник: [Игорь Алексеенко] (https://htmlacademy.ru/profile/o0).
 
 ---
 
