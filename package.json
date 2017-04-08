@@ -17,9 +17,7 @@
     "eslint": "3.9.0",
     "eslint-config-htmlacademy": "0.2.x"
   },
-  "dependencies": {
-    "eslint": "^3.19.0"
-  },
+  "dependencies": {},
   "scripts": {
     "test": "eslint js/"
   },
