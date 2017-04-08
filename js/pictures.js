@@ -69,7 +69,7 @@ var generateComments = function (array) {
  */
 var generatePhoto = function (urls, comments) {
   var photo = {
-    url: 'photos/' + getElement(urls) + '.jpg',
+    url: 'photos/' + getElement(urls, true) + '.jpg',
     likes: getRandomNumber(15, 200),
     comments: generateComments(comments)
   };
