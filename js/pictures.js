@@ -278,6 +278,7 @@ var onPictureEnterPress = function (evt, i) {
 var openGallery = function (i) {
   renderGalleryOverlay(photos[i]);
   showElement(galleryOverlay);
+  closeGalleryOverlay.focus();
   closeGalleryOverlay.addEventListener('click', closeGallery);
   closeGalleryOverlay.addEventListener('keydown', onCloseGalleryEnterPress);
   galleryOverlay.addEventListener('click', onGalleryOverlayClick);
@@ -297,8 +298,8 @@ var closeGallery = function () {
 
 /**
  * Навесить обработчики на все изображения
- * @param  {Element} picture - изображерие
- * @param  {number} i - индекс изображения в массиве
+ * @param {Element} picture - изображерие
+ * @param {number} i - индекс изображения в массиве
  */
 pictures.forEach(function (picture, i) {
   picture.addEventListener('click', function (evt) {
@@ -325,7 +326,7 @@ var closeUploadForm = function () {
 
 /**
  * Нажать ESC в форме кадрирования
- * @param  {KeyboardEvent} evt - событие
+ * @param {KeyboardEvent} evt - событие
  */
 var onCropFormEscPress = function (evt) {
   if (!evt.target.classList.contains('upload-form-description') && evt.keyCode === ESC) {
@@ -336,7 +337,7 @@ var onCropFormEscPress = function (evt) {
 
 /**
  * Нажать ENTER на кнопке закрытия формы кадрирования
- * @param  {KeyboardEvent} evt - событие
+ * @param {KeyboardEvent} evt - событие
  */
 var onButtonCloseCropFormEnterPress = function (evt) {
   if (evt.keyCode === ENTER) {
@@ -347,7 +348,7 @@ var onButtonCloseCropFormEnterPress = function (evt) {
 
 /**
  * Нажать на кнопку оправки формы кадрирования
- * @param  {MouseEvent} evt - событие
+ * @param {MouseEvent} evt - событие
  */
 var onSubmitCropFormClick = function (evt) {
   evt.preventDefault();
@@ -356,7 +357,7 @@ var onSubmitCropFormClick = function (evt) {
 
 /**
  * Нажать ENTER на кнопкe оправки формы кадрирования
- * @param  {KeyboardEvent} evt - событие
+ * @param {KeyboardEvent} evt - событие
  */
 var onSubmitCropFormEnterPress = function (evt) {
   if (evt.keyCode === ENTER) {
@@ -365,10 +366,16 @@ var onSubmitCropFormEnterPress = function (evt) {
   }
 };
 
+/**
+ * Показать прелоадер
+ */
 var showPreloader = function () {
   uploadFormLabel.classList.add('load-file');
 };
 
+/**
+ * Скрыть прелоадер
+ */
 var hidePreloader = function () {
   uploadFormLabel.classList.remove('load-file');
 };
@@ -391,6 +398,7 @@ var onUploadFormFileChange = function (evt) {
 var openCropForm = function () {
   showElement(cropForm);
   closeUploadForm();
+  buttonCloseCropForm.focus();
   buttonCloseCropForm.addEventListener('click', closeCropForm);
   buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
   document.addEventListener('keydown', onCropFormEscPress);
