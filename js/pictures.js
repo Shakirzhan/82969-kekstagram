@@ -200,6 +200,7 @@ var closeGalleryOverlay = galleryOverlay.querySelector('.gallery-overlay-close')
 
 var uploadForm = document.querySelector('#upload-select-image');
 var uploadFormFile = uploadForm.querySelector('#upload-file');
+var uploadFormLabel = uploadForm.querySelector('.upload-file');
 var buttonCloseCropForm = cropForm.querySelector('.upload-form-cancel');
 var submitCropForm = cropForm.querySelector('.upload-form-submit');
 
@@ -217,7 +218,7 @@ var ENTER = 13;
 
 /**
  * Нажать ESC в открытой галерее
- * @param {Object} evt - событие
+ * @param {KeyboardEvent} evt - событие
  */
 var onGalleryEscPress = function (evt) {
   if (evt.keyCode === ESC) {
@@ -228,7 +229,7 @@ var onGalleryEscPress = function (evt) {
 
 /**
  * Нажать ENTER на кнопке закрытия гялереи
- * @param {Object} evt - событие
+ * @param {KeyboardEvent} evt - событие
  */
 var onCloseGalleryEnterPress = function (evt) {
   if (evt.keyCode === ENTER) {
@@ -239,7 +240,7 @@ var onCloseGalleryEnterPress = function (evt) {
 
 /**
  * Нажать на подложку галереи
- * @param {Object} evt - событие
+ * @param {MouseEvent} evt - событие
  */
 var onGalleryOverlayClick = function (evt) {
   if (evt.target.classList.contains('gallery-overlay')) {
@@ -249,12 +250,32 @@ var onGalleryOverlayClick = function (evt) {
 };
 
 /**
- * Открыть галерею, отрисовать изображение, навесить обработчики событий
- * @param {Object} evt - событие
+ * Нажать на изображение
+ * @param {MouseEvent} evt - событие
  * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
  */
-var openGallery = function (evt, i) {
+var onPictureClick = function (evt, i) {
   evt.preventDefault();
+  openGallery(i);
+};
+
+/**
+ * Нажать ENTER на изображении
+ * @param {KeyboardEvent} evt - событие
+ * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
+ */
+var onPictureEnterPress = function (evt, i) {
+  if (evt.keyCode === ENTER) {
+    evt.preventDefault();
+    openGallery(i);
+  }
+};
+
+/**
+ * Открыть галерею, отрисовать изображение, навесить обработчики событий
+ * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
+ */
+var openGallery = function (i) {
   renderGalleryOverlay(photos[i]);
   showElement(galleryOverlay);
   closeGalleryOverlay.addEventListener('click', closeGallery);
@@ -281,12 +302,10 @@ var closeGallery = function () {
  */
 pictures.forEach(function (picture, i) {
   picture.addEventListener('click', function (evt) {
-    openGallery(evt, i);
+    onPictureClick(evt, i);
   });
   picture.addEventListener('keydown', function (evt) {
-    if (evt.keyCode === ENTER) {
-      openGallery(evt, i);
-    }
+    onPictureEnterPress(evt, i);
   });
 });
 
@@ -305,19 +324,8 @@ var closeUploadForm = function () {
 };
 
 /**
- * Нажать на подложку формы кадрирования
- * @param  {Object} evt - событие
- */
-var onOverlayCropFormClick = function (evt) {
-  if (evt.target.classList.contains('upload-overlay')) {
-    evt.preventDefault();
-    closeCropForm();
-  }
-};
-
-/**
  * Нажать ESC в форме кадрирования
- * @param  {Object} evt - событие
+ * @param  {KeyboardEvent} evt - событие
  */
 var onCropFormEscPress = function (evt) {
   if (!evt.target.classList.contains('upload-form-description') && evt.keyCode === ESC) {
@@ -328,7 +336,7 @@ var onCropFormEscPress = function (evt) {
 
 /**
  * Нажать ENTER на кнопке закрытия формы кадрирования
- * @param  {Object} evt - событие
+ * @param  {KeyboardEvent} evt - событие
  */
 var onButtonCloseCropFormEnterPress = function (evt) {
   if (evt.keyCode === ENTER) {
@@ -339,7 +347,7 @@ var onButtonCloseCropFormEnterPress = function (evt) {
 
 /**
  * Нажать на кнопку оправки формы кадрирования
- * @param  {Object} evt - событие
+ * @param  {MouseEvent} evt - событие
  */
 var onSubmitCropFormClick = function (evt) {
   evt.preventDefault();
@@ -348,12 +356,32 @@ var onSubmitCropFormClick = function (evt) {
 
 /**
  * Нажать ENTER на кнопкe оправки формы кадрирования
- * @param  {Object} evt - событие
+ * @param  {KeyboardEvent} evt - событие
  */
 var onSubmitCropFormEnterPress = function (evt) {
   if (evt.keyCode === ENTER) {
     evt.preventDefault();
     closeCropForm();
+  }
+};
+
+var showPreloader = function () {
+  uploadFormLabel.classList.add('load-file');
+};
+
+var hidePreloader = function () {
+  uploadFormLabel.classList.remove('load-file');
+};
+
+/**
+ * Изменить поле загрузки файла
+ * @param  {Event} evt - событие
+ */
+var onUploadFormFileChange = function (evt) {
+  showPreloader();
+  if (evt.target.value !== '') {
+    hidePreloader();
+    openCropForm();
   }
 };
 
@@ -365,21 +393,19 @@ var openCropForm = function () {
   closeUploadForm();
   buttonCloseCropForm.addEventListener('click', closeCropForm);
   buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
-  cropForm.addEventListener('click', onOverlayCropFormClick);
   document.addEventListener('keydown', onCropFormEscPress);
   submitCropForm.addEventListener('click', onSubmitCropFormClick);
   submitCropForm.addEventListener('keydown', onSubmitCropFormEnterPress);
 };
 
 /**
- * Закрыть форму кадрирования, снфть обработчики событий
+ * Закрыть форму кадрирования, снять обработчики событий
  */
 var closeCropForm = function () {
   hideElement(cropForm);
   openUploadForm();
   buttonCloseCropForm.removeEventListener('click', closeCropForm);
   buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
-  cropForm.removeEventListener('click', onOverlayCropFormClick);
   document.removeEventListener('keydown', onCropFormEscPress);
   submitCropForm.removeEventListener('click', onSubmitCropFormClick);
   submitCropForm.removeEventListener('keydown', onSubmitCropFormEnterPress);
@@ -388,4 +414,4 @@ var closeCropForm = function () {
 /**
  * Изменить поле загрузки файла
  */
-uploadFormFile.addEventListener('change', openCropForm);
+uploadFormFile.addEventListener('change', onUploadFormFileChange);
