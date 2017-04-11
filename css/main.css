@@ -809,3 +809,39 @@ input[type=radio]:checked + .upload-filter-label .upload-filter-preview {
 .footer-social-item-vk {
   background-position: -84px 0;
 }
+
+.m-load-file {
+  position: absolute;
+  top: 54px;
+  left: 54px;
+  z-index: 3;
+  display: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border-top: 5px solid #f4dc3a;
+  border-right: 5px solid #f4dc3a;
+  border-bottom: 5px solid #f4dc3a;
+  border-left: 5px solid #000000;
+  animation: rotate-preloader 1.5s infinite linear;
+}
+
+.m-load-file:after {
+  content: "";
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+}
+
+@keyframes rotate-preloader {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.upload-file.load-file .m-load-file {
+  display: block;
+}
