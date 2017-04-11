@@ -387,10 +387,8 @@ var hidePreloader = function () {
 var onUploadFormFileChange = function (evt) {
   showPreloader();
   if (evt.target.value !== '') {
-    setTimeout(function() {
-      hidePreloader();
-      openCropForm();
-    }, 3000);
+    hidePreloader();
+    openCropForm();
   } else {
     hidePreloader();
   }
