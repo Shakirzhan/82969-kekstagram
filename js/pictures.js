@@ -351,8 +351,8 @@ var onButtonCloseCropFormEnterPress = function (evt) {
  * @param {MouseEvent} evt - событие
  */
 var onSubmitCropFormClick = function (evt) {
-  if (isCropFormValidity()) {
-    evt.preventDefault();
+  evt.preventDefault();
+  if (validCropForm()) {
     closeCropForm();
   }
 };
@@ -362,9 +362,11 @@ var onSubmitCropFormClick = function (evt) {
  * @param {KeyboardEvent} evt - событие
  */
 var onSubmitCropFormEnterPress = function (evt) {
-  if (isCropFormValidity() && evt.keyCode === ENTER) {
+  if (evt.keyCode === ENTER) {
     evt.preventDefault();
-    closeCropForm();
+    if (validCropForm()) {
+      closeCropForm();
+    }
   }
 };
 
@@ -401,6 +403,7 @@ var resizeButtonInc = cropForm.querySelector('.upload-resize-controls-button-inc
 var resizeInput = cropForm.querySelector('.upload-resize-controls-value');
 var resizeComment = cropForm.querySelector('.upload-form-description');
 var imagePreview = cropForm.querySelector('.filter-image-preview');
+var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
 var filterControls = cropForm.querySelector('.upload-filter-controls');
 
 /**
@@ -422,7 +425,7 @@ var MAX_RESIZE = 100;
 var STEP_RESIZE = 25;
 
 /**
-* Шаг масштабирования изображения
+* Фильтр изображения по-умолчанию
 * @constant {string}
  */
 var DEFAULT_FILTER = 'none';
@@ -480,7 +483,7 @@ var removeError = function (el) {
 var validResizeValue = function () {
   var resizeValue = getResizeValue();
 
-  if (resizeValue >= 25 && resizeValue <= 100) {
+  if (resizeValue >= MIN_RESIZE && resizeValue <= MAX_RESIZE) {
     removeError(resizeInput);
     return true;
   } else {
@@ -494,9 +497,7 @@ var validResizeValue = function () {
  * @return {boolean}
  */
 var validResizeComment = function () {
-  var comment = resizeComment.value.toString();
-
-  if (comment.length >= 30 && comment.length <= 100) {
+  if (resizeComment.validity.valid) {
     removeError(resizeComment);
     return true;
   } else {
@@ -510,9 +511,9 @@ var validResizeComment = function () {
  * @return {boolean}
  */
 var validFilterImage = function () {
-  var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
+  var filter = cropForm.querySelector('[name="upload-filter"]:checked');
 
-  if (activeFilter) {
+  if (filter) {
     removeError(filterControls);
     return true;
   } else {
@@ -525,13 +526,13 @@ var validFilterImage = function () {
  * Валидация формы кадрирования
  * @return {boolean}
  */
-var isCropFormValidity = function () {
-  return (validResizeValue() && validFilterImage() && validResizeComment());
+var validCropForm = function () {
+  return (validResizeValue() && validResizeComment() && validFilterImage());
 };
 
 /**
  * Изменить масштаб у изображения
- * @param  {type} value - масштаб
+ * @param  {number} value - масштаб
  */
 var changeScaleOnImage = function (value) {
   imagePreview.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
@@ -542,12 +543,7 @@ var changeScaleOnImage = function (value) {
  * @param {string} value - название фильтра
  */
 var changeFilterOnImage = function (value) {
-  for (var i = 0; i < imagePreview.classList.length; i++) {
-    if (imagePreview.classList[i].indexOf('filter-') !== -1) {
-      imagePreview.classList.remove(imagePreview.classList[i]);
-    }
-  }
-
+  imagePreview.classList.remove('filter-' + activeFilter.value);
   imagePreview.classList.add('filter-' + value);
 };
 
@@ -557,6 +553,7 @@ var changeFilterOnImage = function (value) {
  */
 var onFilterControlsChange = function (evt) {
   changeFilterOnImage(evt.target.value);
+  activeFilter = evt.target;
 };
 
 /**
@@ -564,14 +561,12 @@ var onFilterControlsChange = function (evt) {
  * @param {string} value - название фильтра
  */
 var setDefaultFilter = function (value) {
-  var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
-
   activeFilter.checked = false;
   cropForm.querySelector('#upload-filter-' + value).checked = true;
 };
 
 /**
- * Сбросить поле комментария
+ * Очистить поле комментария
  */
 var clearTextComment = function () {
   resizeComment.value = '';
