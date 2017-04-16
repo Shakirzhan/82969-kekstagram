@@ -845,3 +845,12 @@ input[type=radio]:checked + .upload-filter-label .upload-filter-preview {
 .upload-file.load-file .m-load-file {
   display: block;
 }
+
+.upload-filter-controls.m-error,
+.upload-form-description.m-error {
+  border: 2px solid red;
+}
+
+.upload-resize-controls-value.m-error {
+  background-color: rgba(255, 0, 0, 0.5);
+}
