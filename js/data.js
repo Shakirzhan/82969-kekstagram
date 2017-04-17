@@ -62,24 +62,27 @@ window.data = (function () {
     return photo;
   };
 
-  /**
-   * Сгенерировать массив фотографий по заданному количеству и параметрам
-   * @param {number} countPhotos - количество изображений
-   * @param {Array} comments - массив комментариев
-   * @return {Array} - массив фотографий
-   */
-  var generatePhotos = function (countPhotos, comments) {
-    var urls = generateUrls(countPhotos);
-    var photoArray = [];
-
-    for (var i = 0; i < countPhotos; i++) {
-      photoArray[i] = generatePhoto(countPhotos, urls, comments);
-    }
-
-    return photoArray;
-  };
-
   return {
-    photos: generatePhotos(window.dataDefault.countPhotos, window.dataDefault.comments)
+    /**
+     * Данные по-умолчанию
+     */
+    countPhotos: 25,
+    comments: ['Всё отлично!', 'В целом всё неплохо. Но не всё.', 'Когда вы делаете фотографию, хорошо бы убирать палец из кадра. В конце-концов это просто непрофессионально.', 'Моя бабушка случайно чихнула с фотоаппаратом в руках и у неё получилась фотография лучше.', 'Я поскользнулся на банановой кожуре и уронил фотоаппарат на кота и у меня получилась фотография лучше.', 'Лица у людей на фотке перекошены, как-будто их избивают. Как можно было поймать такой неудачный момент?!'],
+    /**
+     * Сгенерировать массив фотографий по заданному количеству и параметрам
+     * @param {number} countPhotos - количество изображений
+     * @param {Array} comments - массив комментариев
+     * @return {Array} - массив фотографий
+     */
+    generatePhotos: function (countPhotos, comments) {
+      var urls = generateUrls(countPhotos);
+      var photoArray = [];
+
+      for (var i = 0; i < countPhotos; i++) {
+        photoArray[i] = generatePhoto(countPhotos, urls, comments);
+      }
+
+      return photoArray;
+    }
   };
 })();

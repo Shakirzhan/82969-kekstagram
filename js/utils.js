@@ -102,22 +102,6 @@ window.utils = (function () {
      */
     hidePreloader: function () {
       uploadFormLabel.classList.remove('load-file');
-    },
-
-    /**
-     * Добавить класс ошибки к элементу
-     * @param {Element} el
-     */
-    addError: function (el) {
-      el.classList.add('m-error');
-    },
-
-    /**
-     * Удалить класс ошибки с элемента
-     * @param {Element} el
-     */
-    removeError: function (el) {
-      el.classList.remove('m-error');
     }
   };
 })();

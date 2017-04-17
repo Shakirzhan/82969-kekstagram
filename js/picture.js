@@ -37,5 +37,6 @@ window.picture = (function () {
     return fragmentPhotos;
   };
 
-  pictureList.appendChild(generateFragmentPhotos(window.data.photos));
+  window.photos = window.data.generatePhotos(window.data.countPhotos, window.data.comments);
+  pictureList.appendChild(generateFragmentPhotos(window.photos));
 })();

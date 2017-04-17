@@ -46,6 +46,22 @@ window.form = (function () {
   var DEFAULT_FILTER = 'none';
 
   /**
+   * Добавить класс ошибки к элементу
+   * @param {Element} el
+   */
+  var addError = function (el) {
+    el.classList.add('m-error');
+  };
+
+  /**
+   * Удалить класс ошибки с элемента
+   * @param {Element} el
+   */
+  var removeError = function (el) {
+    el.classList.remove('m-error');
+  };
+
+  /**
    * Изменить поле загрузки файла
    * @param  {Event} evt - событие
    */
@@ -143,10 +159,10 @@ window.form = (function () {
     var resizeValue = getResizeValue();
 
     if (resizeValue >= MIN_RESIZE && resizeValue <= MAX_RESIZE) {
-      window.utils.removeError(resizeInput);
+      removeError(resizeInput);
       return true;
     } else {
-      window.utils.addError(resizeInput);
+      addError(resizeInput);
       return false;
     }
   };
@@ -157,10 +173,10 @@ window.form = (function () {
    */
   var validResizeComment = function () {
     if (imageComment.validity.valid) {
-      window.utils.removeError(imageComment);
+      removeError(imageComment);
       return true;
     } else {
-      window.utils.addError(imageComment);
+      addError(imageComment);
       return false;
     }
   };
@@ -173,10 +189,10 @@ window.form = (function () {
     var filter = cropForm.querySelector('[name="upload-filter"]:checked');
 
     if (filter) {
-      window.utils.removeError(filterControls);
+      removeError(filterControls);
       return true;
     } else {
-      window.utils.addError(filterControls);
+      addError(filterControls);
       return false;
     }
   };
@@ -239,7 +255,7 @@ window.form = (function () {
     changeFilterOnImage(DEFAULT_FILTER);
     setDefaultFilter(DEFAULT_FILTER);
     clearTextComment();
-    window.utils.removeError(imageComment);
+    removeError(imageComment);
   };
 
   /**

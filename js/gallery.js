@@ -6,6 +6,29 @@ window.gallery = (function () {
   var buttonCloseGallery = galleryPopup.querySelector('.gallery-overlay-close');
 
   /**
+   * Отрисовать шаблон комментария
+   * @param {number} countComments
+   * @return {string} - шаблон
+   */
+  var renderComment = function (countComments) {
+    return '<span class="comments-count">' + countComments + '</span> ' + window.utils.getWordByNumber(countComments, ['комментарий', 'комментария', 'комментариев']);
+  };
+
+  /**
+   * Отрисовать элемент галереи
+   * @param {Object} picture - изображение
+   */
+  var renderGalleryItem = function (picture) {
+    var imageGallery = galleryPopup.querySelector('.gallery-overlay-image');
+    var likesCount = galleryPopup.querySelector('.likes-count');
+    var commentsCount = galleryPopup.querySelector('.gallery-overlay-controls-comments');
+
+    imageGallery.setAttribute('src', picture.url);
+    likesCount.textContent = picture.likes;
+    commentsCount.innerHTML = renderComment(picture.comments.length);
+  };
+
+  /**
    * Нажать на изображение
    * @param {MouseEvent} evt - событие
    * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
@@ -79,7 +102,7 @@ window.gallery = (function () {
    * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
    */
   var openGallery = function (i) {
-    window.preview.renderGalleryItem(window.data.photos[i]);
+    renderGalleryItem(window.photos[i]);
     window.utils.showElement(galleryPopup);
     buttonCloseGallery.focus();
     buttonCloseGallery.addEventListener('click', closeGallery);
@@ -97,9 +120,5 @@ window.gallery = (function () {
     buttonCloseGallery.removeEventListener('keydown', onCloseGalleryEnterPress);
     galleryPopup.removeEventListener('click', onGalleryOverlayClick);
     document.removeEventListener('keydown', onGalleryEscPress);
-  };
-
-  return {
-    galleryPopup: galleryPopup
   };
 })();
