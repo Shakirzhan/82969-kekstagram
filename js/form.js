@@ -5,7 +5,6 @@ window.form = (function () {
    * Форма загрузки изображения
    */
   var uploadForm = document.querySelector('.upload-form');
-  var uploadFormFile = uploadForm.querySelector('#upload-file');
 
   /**
    * Форма кадрирования изображения
@@ -13,37 +12,7 @@ window.form = (function () {
   var cropForm = document.querySelector('.upload-overlay');
   var buttonCloseCropForm = cropForm.querySelector('.upload-form-cancel');
   var submitCropForm = cropForm.querySelector('.upload-form-submit');
-  var resizeButtonDec = cropForm.querySelector('.upload-resize-controls-button-dec');
-  var resizeButtonInc = cropForm.querySelector('.upload-resize-controls-button-inc');
-  var resizeInput = cropForm.querySelector('.upload-resize-controls-value');
-  var imagePreview = cropForm.querySelector('.filter-image-preview');
   var imageComment = cropForm.querySelector('.upload-form-description');
-  var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
-  var filterControls = cropForm.querySelector('.upload-filter-controls');
-
-  /**
-  * Минимальное значение масштаба изображения
-  * @constant {number}
-   */
-  var MIN_RESIZE = 25;
-
-  /**
-  * Максимальное значение масштаба изображения
-  * @constant {number}
-   */
-  var MAX_RESIZE = 100;
-
-  /**
-  * Шаг масштабирования изображения
-  * @constant {number}
-   */
-  var STEP_RESIZE = 25;
-
-  /**
-  * Фильтр изображения по-умолчанию
-  * @constant {string}
-   */
-  var DEFAULT_FILTER = 'none';
 
   /**
    * Добавить класс ошибки к элементу
@@ -59,20 +28,6 @@ window.form = (function () {
    */
   var removeError = function (el) {
     el.classList.remove('m-error');
-  };
-
-  /**
-   * Изменить поле загрузки файла
-   * @param  {Event} evt - событие
-   */
-  var onUploadFormFileChange = function (evt) {
-    window.utils.showPreloader();
-    if (evt.target.value !== '') {
-      window.utils.hidePreloader();
-      openCropForm();
-    } else {
-      window.utils.hidePreloader();
-    }
   };
 
   /**
@@ -122,52 +77,6 @@ window.form = (function () {
   };
 
   /**
-   * Получить масштаб изображения
-   * @return {number} - масштаб
-   */
-  var getResizeValue = function () {
-    return parseInt(resizeInput.value, 10);
-  };
-
-  /**
-   * Нажать на уменьшение масштаба
-   */
-  var onResizeButtonDecClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
-      resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue - STEP_RESIZE);
-    }
-  };
-
-  /**
-   * Нажать на увеличение масштаба
-   */
-  var onResizeButtonIncClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
-      resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue + STEP_RESIZE);
-    }
-  };
-
-  /**
-   * Валидация масштаба
-   * @return {boolean}
-   */
-  var validResizeValue = function () {
-    var resizeValue = getResizeValue();
-
-    if (resizeValue >= MIN_RESIZE && resizeValue <= MAX_RESIZE) {
-      removeError(resizeInput);
-      return true;
-    } else {
-      addError(resizeInput);
-      return false;
-    }
-  };
-
-  /**
    * Валидация поля комментария
    * @return {boolean}
    */
@@ -182,81 +91,33 @@ window.form = (function () {
   };
 
   /**
-   * Валидация фильтров изображения
-   * @return {boolean}
-   */
-  var validFilterImage = function () {
-    var filter = cropForm.querySelector('[name="upload-filter"]:checked');
-
-    if (filter) {
-      removeError(filterControls);
-      return true;
-    } else {
-      addError(filterControls);
-      return false;
-    }
-  };
-
-  /**
    * Валидация формы кадрирования
    * @return {boolean}
    */
   var validCropForm = function () {
-    return (validResizeValue() && validResizeComment() && validFilterImage());
+    return (window.resize.valid() && validResizeComment() && window.filter.valid());
   };
 
   /**
-   * Изменить масштаб у изображения
-   * @param  {number} value - масштаб
-   */
-  var changeScaleOnImage = function (value) {
-    imagePreview.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
-  };
-
-  /**
-   * Изменить фильтр у изображения
-   * @param {string} value - название фильтра
-   */
-  var changeFilterOnImage = function (value) {
-    imagePreview.classList.remove('filter-' + activeFilter.value);
-    imagePreview.classList.add('filter-' + value);
-  };
-
-  /**
-   * Изменить фильтр
-   * @param  {Event} evt - событие
-   */
-  var onFilterControlsChange = function (evt) {
-    changeFilterOnImage(evt.target.value);
-    activeFilter = evt.target;
-  };
-
-  /**
-   * Сбросить фильтр изображения
-   * @param {string} value - название фильтра
-   */
-  var setDefaultFilter = function (value) {
-    activeFilter.checked = false;
-    cropForm.querySelector('#upload-filter-' + value).checked = true;
-  };
-
-  /**
-   * Очистить поле комментария
+   * Очистить поле комментария, снять сообщение об ошибке
    */
   var clearTextComment = function () {
     imageComment.value = '';
+    removeError(imageComment);
   };
 
   /**
    * Сбросить форму кадрирования
    */
   var resetCropForm = function () {
-    changeScaleOnImage(MAX_RESIZE);
-    changeFilterOnImage(DEFAULT_FILTER);
-    setDefaultFilter(DEFAULT_FILTER);
     clearTextComment();
-    removeError(imageComment);
   };
+
+  /**
+   * Событие закрытия формы кадрирования
+   * @param  {type} e description
+   */
+  var closeForm = new Event('closeForm');
 
   /**
    * Открыть форму кадрирования, навесить обработчики событий
@@ -270,9 +131,7 @@ window.form = (function () {
     document.addEventListener('keydown', onCropFormEscPress);
     submitCropForm.addEventListener('click', onSubmitCropFormClick);
     submitCropForm.addEventListener('keydown', onSubmitCropFormEnterPress);
-    resizeButtonDec.addEventListener('click', onResizeButtonDecClick);
-    resizeButtonInc.addEventListener('click', onResizeButtonIncClick);
-    filterControls.addEventListener('change', onFilterControlsChange);
+    cropForm.addEventListener('closeForm', resetCropForm);
   };
 
   /**
@@ -281,21 +140,19 @@ window.form = (function () {
   var closeCropForm = function () {
     window.utils.hideElement(cropForm);
     window.utils.showElement(uploadForm);
-    resetCropForm();
+    cropForm.dispatchEvent(closeForm);
     buttonCloseCropForm.removeEventListener('click', closeCropForm);
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.removeEventListener('keydown', onCropFormEscPress);
     submitCropForm.removeEventListener('click', onSubmitCropFormClick);
     submitCropForm.removeEventListener('keydown', onSubmitCropFormEnterPress);
-    resizeButtonDec.removeEventListener('click', onResizeButtonDecClick);
-    resizeButtonInc.removeEventListener('click', onResizeButtonIncClick);
-    filterControls.removeEventListener('change', onFilterControlsChange);
+    cropForm.removeEventListener('closeForm', resetCropForm);
   };
 
-  /**
-   * Изменить поле загрузки файла
-   */
-  uploadFormFile.addEventListener('change', onUploadFormFileChange);
-
   window.utils.hideElement(cropForm);
+
+  return {
+    cropForm: cropForm,
+    openCropForm: openCropForm
+  };
 })();

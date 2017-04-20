@@ -854,3 +854,27 @@ input[type=radio]:checked + .upload-filter-label .upload-filter-preview {
 .upload-resize-controls-value.m-error {
   background-color: rgba(255, 0, 0, 0.5);
 }
+
+.modal-info {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  width: 582px;
+  margin-left: -291px;
+  background-color: #f4dc3a;
+  transition: top 0.3s ease;
+}
+
+.modal-info.m-show {
+  top: 0;
+}
+
+.modal-info__text {
+  margin: 15px 0;
+  padding: 0 20px;
+  color: #000000;
+}
+
+.upload-filter-level-line {
+  cursor: pointer;
+}
