@@ -36,8 +36,7 @@ window.upload = (function () {
    */
   var onDropZoneDrop = function (evt) {
     evt.preventDefault();
-    var file = evt.dataTransfer.files[0];
-    uploadImage(file);
+    uploadImage(evt.dataTransfer.files[0]);
   };
 
   dropZone.addEventListener('dragover', onDropZoneDragOver, false);
@@ -82,6 +81,8 @@ window.upload = (function () {
    * @param {File} file
    */
   var uploadImage = function (file) {
+    dropZone.classList.remove('m-hover');
+
     if (file && checkFileExtension(file)) {
       var reader = new FileReader();
 
@@ -104,8 +105,5 @@ window.upload = (function () {
     }
   };
 
-  /**
-   * Изменить поле загрузки файла
-   */
   uploadFormFile.addEventListener('change', onUploadFormFileChange);
 })();

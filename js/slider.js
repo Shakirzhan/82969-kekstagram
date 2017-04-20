@@ -66,6 +66,10 @@ window.slider = (function () {
     imagePreview.style.filter = filterValue;
   };
 
+  /**
+   * Нажать на полосу сдайдера
+   * @param {MouseEvent} evt
+   */
   var onSliderLineClick = function (evt) {
     if (!evt.target.classList.contains('upload-filter-level-pin')) {
       evt.preventDefault();
@@ -73,11 +77,18 @@ window.slider = (function () {
     }
   };
 
+  /**
+   * Нажать на "ручку" слайдера
+   * @param {MouseEvent} evt
+   */
   var onSliderHandleMouseDown = function (evt) {
     evt.preventDefault();
-
     var startCoordX = evt.clientX;
 
+    /**
+     * Тащить "ручку" слайдера
+     * @param {MouseEvent} mouseMoveEvt
+     */
     var onMouseMove = function (mouseMoveEvt) {
       mouseMoveEvt.preventDefault();
 
@@ -88,6 +99,10 @@ window.slider = (function () {
       setSliderValue(valueSlider);
     };
 
+    /**
+     * Отпустить "ручку" слайдера
+     * @param {MouseEvent} mouseUpEvt
+     */
     var onMouseUp = function (mouseUpEvt) {
       mouseUpEvt.preventDefault();
 
@@ -104,6 +119,10 @@ window.slider = (function () {
   window.utils.hideElement(slider);
 
   return {
+    /**
+     * Показать/скрыть слайдер, на основе выбранного фильтра
+     * @param {string} value - выбранное значение фильтра
+     */
     showSlider: function (value) {
       activeFilterValue = value;
 

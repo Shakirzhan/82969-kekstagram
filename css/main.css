@@ -878,3 +878,13 @@ input[type=radio]:checked + .upload-filter-label .upload-filter-preview {
 .upload-filter-level-line {
   cursor: pointer;
 }
+
+.upload-image {
+  border: 5px dashed transparent;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.upload-image.m-hover {
+  border-color: #f4dc3a;
+}
