@@ -31,46 +31,34 @@ window.resize = (function () {
     return parseInt(resizeInput.value, 10);
   };
 
-  /**
-   * Нажать на уменьшение масштаба
-   */
-  var onResizeButtonDecClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
-      resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue - STEP_RESIZE);
-    }
-  };
 
   /**
-   * Нажать на увеличение масштаба
+   * Событие изменения масштаба
+   * @param {null} _
+   * @param {Function} callback
    */
-  var onResizeButtonIncClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
-      resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue + STEP_RESIZE);
-    }
+  var addResizeListener = function (_, callback) {
+    /**
+     * Нажать на увеличение масштаба
+     */
+    resizeButtonDec.addEventListener('click', function () {
+      var resizeValue = getResizeValue();
+      if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
+        resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
+        callback(resizeValue - STEP_RESIZE);
+      }
+    });
+    /**
+     * Нажать на уменьшение масштаба
+     */
+    resizeButtonInc.addEventListener('click', function () {
+      var resizeValue = getResizeValue();
+      if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
+        resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
+        callback(resizeValue + STEP_RESIZE);
+      }
+    });
   };
-
-  /**
-   * Изменить масштаб у изображения
-   * @param  {number} value - масштаб
-   */
-  var changeScaleOnImage = function (value) {
-    window.preview.image.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
-  };
-
-  /**
-   * Установить в масштабе значение по умолчанию
-   */
-  var resetResize = function () {
-    changeScaleOnImage(MAX_RESIZE);
-  };
-
-  resizeButtonDec.addEventListener('click', onResizeButtonDecClick);
-  resizeButtonInc.addEventListener('click', onResizeButtonIncClick);
-  window.form.cropForm.addEventListener('closecropform', resetResize);
 
   return {
     /**
@@ -87,6 +75,7 @@ window.resize = (function () {
         window.utils.addError(resizeInput);
         return false;
       }
-    }
+    },
+    addResizeListener: addResizeListener
   };
 })();

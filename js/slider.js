@@ -51,7 +51,7 @@ window.slider = (function () {
   };
 
   /**
-   * Нажать на полосу сдайдера
+   * Нажать на полосу слайдера
    * @param {MouseEvent} evt
    */
   var onSliderClick = function (evt) {
