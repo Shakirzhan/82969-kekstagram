@@ -875,7 +875,7 @@ input[type=radio]:checked + .upload-filter-label .upload-filter-preview {
   color: #000000;
 }
 
-.upload-filter-level-line {
+.upload-filter-level {
   cursor: pointer;
 }
 

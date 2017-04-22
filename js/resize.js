@@ -70,7 +70,7 @@ window.resize = (function () {
 
   resizeButtonDec.addEventListener('click', onResizeButtonDecClick);
   resizeButtonInc.addEventListener('click', onResizeButtonIncClick);
-  window.form.cropForm.addEventListener('closeForm', resetResize);
+  window.form.cropForm.addEventListener('closecropform', resetResize);
 
   return {
     /**
@@ -81,10 +81,10 @@ window.resize = (function () {
       var resizeValue = getResizeValue();
 
       if (resizeValue >= MIN_RESIZE && resizeValue <= MAX_RESIZE) {
-        window.form.removeError(resizeInput);
+        window.utils.removeError(resizeInput);
         return true;
       } else {
-        window.form.addError(resizeInput);
+        window.utils.addError(resizeInput);
         return false;
       }
     }

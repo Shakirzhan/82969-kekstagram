@@ -1,34 +1,10 @@
 'use strict';
 
 window.form = (function () {
-  /**
-   * Форма загрузки изображения
-   */
-  var uploadForm = document.querySelector('.upload-form');
-
-  /**
-   * Форма кадрирования изображения
-   */
   var cropForm = document.querySelector('.upload-overlay');
   var buttonCloseCropForm = cropForm.querySelector('.upload-form-cancel');
   var submitCropForm = cropForm.querySelector('.upload-form-submit');
   var imageComment = cropForm.querySelector('.upload-form-description');
-
-  /**
-   * Добавить класс ошибки к элементу
-   * @param {Element} el
-   */
-  var addError = function (el) {
-    el.classList.add('m-error');
-  };
-
-  /**
-   * Удалить класс ошибки с элемента
-   * @param {Element} el
-   */
-  var removeError = function (el) {
-    el.classList.remove('m-error');
-  };
 
   /**
    * Нажать ESC в форме кадрирования
@@ -53,26 +29,13 @@ window.form = (function () {
   };
 
   /**
-   * Нажать на кнопку оправки формы кадрирования
-   * @param {MouseEvent} evt - событие
+   * Отправка формы кадрирования
+   * @param {Event} evt - событие
    */
-  var onSubmitCropFormClick = function (evt) {
+  var onSubmitCropForm = function (evt) {
     evt.preventDefault();
     if (validCropForm()) {
       closeCropForm();
-    }
-  };
-
-  /**
-   * Нажать ENTER на кнопкe оправки формы кадрирования
-   * @param {KeyboardEvent} evt - событие
-   */
-  var onSubmitCropFormEnterPress = function (evt) {
-    if (window.utils.isEnterKeyPress(evt)) {
-      evt.preventDefault();
-      if (validCropForm()) {
-        closeCropForm();
-      }
     }
   };
 
@@ -82,10 +45,10 @@ window.form = (function () {
    */
   var validResizeComment = function () {
     if (imageComment.validity.valid) {
-      removeError(imageComment);
+      window.utils.removeError(imageComment);
       return true;
     } else {
-      addError(imageComment);
+      window.utils.addError(imageComment);
       return false;
     }
   };
@@ -103,7 +66,7 @@ window.form = (function () {
    */
   var clearTextComment = function () {
     imageComment.value = '';
-    removeError(imageComment);
+    window.utils.removeError(imageComment);
   };
 
   /**
@@ -115,23 +78,21 @@ window.form = (function () {
 
   /**
    * Событие закрытия формы кадрирования
-   * @param  {type} e description
    */
-  var closeForm = new Event('closeForm');
+  var closecropform = new CustomEvent('closecropform');
 
   /**
    * Открыть форму кадрирования, навесить обработчики событий
    */
   var openCropForm = function () {
     window.utils.showElement(cropForm);
-    window.utils.hideElement(uploadForm);
+    window.utils.hideElement(window.form.uploadForm);
     buttonCloseCropForm.focus();
     buttonCloseCropForm.addEventListener('click', closeCropForm);
     buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.addEventListener('keydown', onCropFormEscPress);
-    submitCropForm.addEventListener('click', onSubmitCropFormClick);
-    submitCropForm.addEventListener('keydown', onSubmitCropFormEnterPress);
-    cropForm.addEventListener('closeForm', resetCropForm);
+    cropForm.addEventListener('submit', onSubmitCropForm);
+    cropForm.addEventListener('closecropform', resetCropForm);
   };
 
   /**
@@ -139,14 +100,13 @@ window.form = (function () {
    */
   var closeCropForm = function () {
     window.utils.hideElement(cropForm);
-    window.utils.showElement(uploadForm);
-    cropForm.dispatchEvent(closeForm);
+    window.utils.showElement(window.form.uploadForm);
+    cropForm.dispatchEvent(closecropform);
     buttonCloseCropForm.removeEventListener('click', closeCropForm);
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.removeEventListener('keydown', onCropFormEscPress);
-    submitCropForm.removeEventListener('click', onSubmitCropFormClick);
-    submitCropForm.removeEventListener('keydown', onSubmitCropFormEnterPress);
-    cropForm.removeEventListener('closeForm', resetCropForm);
+    submitCropForm.removeEventListener('submit', onSubmitCropForm);
+    cropForm.removeEventListener('closecropform', resetCropForm);
   };
 
   window.utils.hideElement(cropForm);

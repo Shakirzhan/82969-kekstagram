@@ -18,7 +18,7 @@ window.filter = (function () {
     window.preview.image.classList.remove('filter-' + activeFilter.value);
     window.preview.image.classList.add('filter-' + value);
     activeFilter = window.form.cropForm.querySelector('#upload-filter-' + value);
-    window.slider.showSlider(value);
+    window.slider(value);
   };
 
   /**
@@ -37,21 +37,21 @@ window.filter = (function () {
   };
 
   filterControls.addEventListener('change', onFilterControlsChange);
-  window.form.cropForm.addEventListener('closeForm', resetFilter);
+  window.form.cropForm.addEventListener('closecropform', resetFilter);
 
+  /**
+   * Валидация фильтров изображения
+   * @return {boolean}
+   */
   return {
-    /**
-     * Валидация фильтров изображения
-     * @return {boolean}
-     */
     valid: function () {
       var filter = window.form.cropForm.querySelector('[name="upload-filter"]:checked');
 
       if (filter) {
-        window.form.removeError(filterControls);
+        window.utils.removeError(filterControls);
         return true;
       } else {
-        window.form.addError(filterControls);
+        window.utils.addError(filterControls);
         return false;
       }
     }

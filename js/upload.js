@@ -1,6 +1,7 @@
 'use strict';
 
 window.upload = (function () {
+  var uploadForm = document.querySelector('#upload-select-image');
   var uploadFormFile = document.querySelector('#upload-file');
   var dropZone = document.querySelector('#upload-select-image');
 
@@ -8,7 +9,13 @@ window.upload = (function () {
   * Разрешенные расширения файла
   * @constant {array}
    */
-  var FILE_EXTENSION = ['jpg', 'jpeg', 'png', 'svg'];
+  var FILE_EXTENSION = {
+    'jpg': '',
+    'jpeg': '',
+    'png': '',
+    'svg': '',
+    'gif': ''
+  };
 
   /**
    * Навести на область загрузки
@@ -49,8 +56,8 @@ window.upload = (function () {
    * @return {boolean}
    */
   var checkFileExtension = function (file) {
-    var arr = file.name.split('.');
-    return FILE_EXTENSION.indexOf(arr[arr.length - 1].toLowerCase()) !== -1 ? true : false;
+    var extension = file.name.split('.').pop();
+    return extension in FILE_EXTENSION;
   };
 
   /**
@@ -70,9 +77,11 @@ window.upload = (function () {
 
   /**
    * Успешное заврешение чтения файла
+   * @param {ProgressEvent} evt
    */
-  var onLoadFile = function () {
+  var onLoadFile = function (evt) {
     window.utils.hidePreloader();
+    window.preview.image.src = evt.target.result;
     window.form.openCropForm();
   };
 
@@ -91,7 +100,7 @@ window.upload = (function () {
       reader.addEventListener('error', onErrorFile);
       reader.addEventListener('load', onLoadFile);
     } else {
-      window.info.openModalInfo('Файл имеет неподдерживаемый формат!');
+      window.openModalInfo('Файл имеет неподдерживаемый формат!');
     }
   };
 
@@ -105,5 +114,17 @@ window.upload = (function () {
     }
   };
 
+  /**
+   * Сбросить форму загрузки файла
+   */
+  var resetUploadForm = function () {
+    uploadForm.reset();
+  };
+
   uploadFormFile.addEventListener('change', onUploadFormFileChange);
+  window.form.cropForm.addEventListener('closecropform', resetUploadForm);
+
+  return {
+    uploadForm: uploadForm
+  };
 })();
