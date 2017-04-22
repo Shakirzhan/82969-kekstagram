@@ -86,7 +86,7 @@ window.form = (function () {
    */
   var openCropForm = function () {
     window.utils.showElement(cropForm);
-    window.utils.hideElement(window.form.uploadForm);
+    window.utils.hideElement(window.upload.uploadForm);
     buttonCloseCropForm.focus();
     buttonCloseCropForm.addEventListener('click', closeCropForm);
     buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
@@ -100,7 +100,7 @@ window.form = (function () {
    */
   var closeCropForm = function () {
     window.utils.hideElement(cropForm);
-    window.utils.showElement(window.form.uploadForm);
+    window.utils.showElement(window.upload.uploadForm);
     cropForm.dispatchEvent(closecropform);
     buttonCloseCropForm.removeEventListener('click', closeCropForm);
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
