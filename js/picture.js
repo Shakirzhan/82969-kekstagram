@@ -48,9 +48,8 @@ window.picture = (function () {
    * @param  {Array} photos - массив фотографий
    */
   var loadPhotos = function (photos) {
-    window.photos = photos;
     pictureList.appendChild(generateFragmentPhotos(photos));
-    window.gallery();
+    window.gallery(photos);
   };
 
   window.load(LOAD_URL, loadPhotos);

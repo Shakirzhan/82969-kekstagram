@@ -3,6 +3,7 @@
 window.gallery = (function () {
   var galleryPopup = document.querySelector('.gallery-overlay');
   var buttonCloseGallery = galleryPopup.querySelector('.gallery-overlay-close');
+  var photosGallery;
 
   /**
    * Отрисовать шаблон комментария
@@ -87,7 +88,7 @@ window.gallery = (function () {
    * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
    */
   var openGallery = function (i) {
-    renderGalleryItem(window.photos[i]);
+    renderGalleryItem(photosGallery[i]);
     window.utils.showElement(galleryPopup);
     buttonCloseGallery.focus();
     buttonCloseGallery.addEventListener('click', closeGallery);
@@ -107,8 +108,13 @@ window.gallery = (function () {
     document.removeEventListener('keydown', onGalleryEscPress);
   };
 
-  return function () {
+  /**
+   * Получить данные, подвесить обработчики событий на картинки
+   * @param {Array} photos - массив объектов для галереи
+   */
+  return function (photos) {
     var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
+    photosGallery = photos;
 
     /**
      * Навесить обработчики на все изображения галереи

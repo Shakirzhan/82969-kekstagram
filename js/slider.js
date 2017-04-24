@@ -5,6 +5,7 @@ window.slider = (function () {
   var sliderLine = window.form.cropForm.querySelector('.upload-filter-level-line');
   var sliderHandle = window.form.cropForm.querySelector('.upload-filter-level-pin');
   var sliderValue = window.form.cropForm.querySelector('.upload-filter-level-val');
+  var previewImage = document.querySelector('.filter-image-preview');
   var activeFilterValue;
   var startCoordX;
 
@@ -47,7 +48,7 @@ window.slider = (function () {
       'none': ''
     };
 
-    window.preview.image.style.filter = filter[activeFilterValue];
+    previewImage.style.filter = filter[activeFilterValue];
   };
 
   /**

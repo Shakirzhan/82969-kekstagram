@@ -6,6 +6,7 @@ window.form = (function () {
   var submitCropForm = cropForm.querySelector('.upload-form-submit');
   var imageComment = cropForm.querySelector('.upload-form-description');
   var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
+  var previewImage = document.querySelector('.filter-image-preview');
 
   /**
   * Масштаб по умолчанию
@@ -79,7 +80,7 @@ window.form = (function () {
    * @param  {number} value - масштаб
    */
   var applyResize = function (value) {
-    window.preview.image.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
+    previewImage.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
   };
 
   /**
@@ -87,8 +88,8 @@ window.form = (function () {
    * @param {string} value - новое значение фильтра
    */
   var applyFilter = function (value) {
-    window.preview.image.classList.remove('filter-' + activeFilter.value);
-    window.preview.image.classList.add('filter-' + value);
+    previewImage.classList.remove('filter-' + activeFilter.value);
+    previewImage.classList.add('filter-' + value);
     activeFilter = window.form.cropForm.querySelector('#upload-filter-' + value);
     window.slider(value);
   };
@@ -135,7 +136,6 @@ window.form = (function () {
     buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.addEventListener('keydown', onCropFormEscPress);
     cropForm.addEventListener('submit', onSubmitCropForm);
-    cropForm.addEventListener('closecropform', resetCropForm);
   };
 
   /**
@@ -149,7 +149,6 @@ window.form = (function () {
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.removeEventListener('keydown', onCropFormEscPress);
     submitCropForm.removeEventListener('submit', onSubmitCropForm);
-    cropForm.removeEventListener('closecropform', resetCropForm);
   };
 
   window.utils.hideElement(cropForm);

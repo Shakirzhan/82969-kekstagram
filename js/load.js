@@ -57,7 +57,6 @@ window.load = (function () {
     showLoadErrorMessage(TIMEOUT_STATUS);
   };
 
-
   /**
    * Загрузить данные с сервера
    * @param {string} url - url для запроса данных
