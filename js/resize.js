@@ -1,9 +1,9 @@
 'use strict';
 
 window.resize = (function () {
-  var resizeButtonDec = window.form.cropForm.querySelector('.upload-resize-controls-button-dec');
-  var resizeButtonInc = window.form.cropForm.querySelector('.upload-resize-controls-button-inc');
-  var resizeInput = window.form.cropForm.querySelector('.upload-resize-controls-value');
+  var resizeButtonDec = document.querySelector('.upload-resize-controls-button-dec');
+  var resizeButtonInc = document.querySelector('.upload-resize-controls-button-inc');
+  var resizeInput = document.querySelector('.upload-resize-controls-value');
 
   /**
   * Минимальное значение масштаба изображения
@@ -31,35 +31,6 @@ window.resize = (function () {
     return parseInt(resizeInput.value, 10);
   };
 
-
-  /**
-   * Событие изменения масштаба
-   * @param {null} _
-   * @param {Function} callback
-   */
-  var addResizeListener = function (_, callback) {
-    /**
-     * Нажать на увеличение масштаба
-     */
-    resizeButtonDec.addEventListener('click', function () {
-      var resizeValue = getResizeValue();
-      if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
-        resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
-        callback(resizeValue - STEP_RESIZE);
-      }
-    });
-    /**
-     * Нажать на уменьшение масштаба
-     */
-    resizeButtonInc.addEventListener('click', function () {
-      var resizeValue = getResizeValue();
-      if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
-        resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
-        callback(resizeValue + STEP_RESIZE);
-      }
-    });
-  };
-
   return {
     /**
      * Валидация масштаба
@@ -76,6 +47,31 @@ window.resize = (function () {
         return false;
       }
     },
-    addResizeListener: addResizeListener
+    /**
+     * Событие изменения масштаба
+     * @param {Function} callback
+     */
+    addResizeListener: function (callback) {
+      /**
+       * Нажать на увеличение масштаба
+       */
+      resizeButtonDec.addEventListener('click', function () {
+        var resizeValue = getResizeValue();
+        if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
+          resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
+          callback(parseInt(resizeInput.value, 10));
+        }
+      });
+      /**
+       * Нажать на уменьшение масштаба
+       */
+      resizeButtonInc.addEventListener('click', function () {
+        var resizeValue = getResizeValue();
+        if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
+          resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
+          callback(parseInt(resizeInput.value, 10));
+        }
+      });
+    }
   };
 })();

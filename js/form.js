@@ -5,6 +5,19 @@ window.form = (function () {
   var buttonCloseCropForm = cropForm.querySelector('.upload-form-cancel');
   var submitCropForm = cropForm.querySelector('.upload-form-submit');
   var imageComment = cropForm.querySelector('.upload-form-description');
+  var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
+
+  /**
+  * Масштаб по умолчанию
+  * @constant {string}
+   */
+  var DEFAULT_RESIZE = 100;
+
+  /**
+  * Фильтр изображения по умолчанию
+  * @constant {string}
+   */
+  var DEFAULT_FILTER = 'none';
 
   /**
    * Нажать ESC в форме кадрирования
@@ -62,6 +75,39 @@ window.form = (function () {
   };
 
   /**
+   * Изменить масштаб у изображения
+   * @param  {number} value - масштаб
+   */
+  var applyResize = function (value) {
+    window.preview.image.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
+  };
+
+  /**
+   * Применить фильтр к изображению
+   * @param {string} value - новое значение фильтра
+   */
+  var applyFilter = function (value) {
+    window.preview.image.classList.remove('filter-' + activeFilter.value);
+    window.preview.image.classList.add('filter-' + value);
+    activeFilter = window.form.cropForm.querySelector('#upload-filter-' + value);
+    window.slider(value);
+  };
+
+  /**
+   * Установить в масштабе значение по умолчанию
+   */
+  var resetResize = function () {
+    applyResize(DEFAULT_RESIZE);
+  };
+
+  /**
+   * Установить в фильтре значение по умолчанию
+   */
+  var resetFilter = function () {
+    applyFilter(DEFAULT_FILTER);
+  };
+
+  /**
    * Очистить поле комментария, снять сообщение об ошибке
    */
   var clearTextComment = function () {
@@ -73,13 +119,10 @@ window.form = (function () {
    * Сбросить форму кадрирования
    */
   var resetCropForm = function () {
+    resetFilter();
+    resetResize();
     clearTextComment();
   };
-
-  /**
-   * Событие закрытия формы кадрирования
-   */
-  var closecropform = new CustomEvent('closecropform');
 
   /**
    * Открыть форму кадрирования, навесить обработчики событий
@@ -101,7 +144,7 @@ window.form = (function () {
   var closeCropForm = function () {
     window.utils.hideElement(cropForm);
     window.utils.showElement(window.upload.uploadForm);
-    cropForm.dispatchEvent(closecropform);
+    resetCropForm();
     buttonCloseCropForm.removeEventListener('click', closeCropForm);
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.removeEventListener('keydown', onCropFormEscPress);
@@ -110,6 +153,8 @@ window.form = (function () {
   };
 
   window.utils.hideElement(cropForm);
+  window.filter.addFilterListener(applyFilter);
+  window.resize.addResizeListener(applyResize);
 
   return {
     cropForm: cropForm,

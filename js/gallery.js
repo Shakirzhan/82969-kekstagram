@@ -1,7 +1,6 @@
 'use strict';
 
 window.gallery = (function () {
-  var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
   var galleryPopup = document.querySelector('.gallery-overlay');
   var buttonCloseGallery = galleryPopup.querySelector('.gallery-overlay-close');
 
@@ -49,20 +48,6 @@ window.gallery = (function () {
       openGallery(i);
     }
   };
-
-  /**
-   * Навесить обработчики на все изображения галереи
-   * @param {Element} picture - изображерие
-   * @param {number} i - индекс изображения в массиве
-   */
-  pictures.forEach(function (picture, i) {
-    picture.addEventListener('click', function (evt) {
-      onPictureClick(evt, i);
-    });
-    picture.addEventListener('keydown', function (evt) {
-      onPictureEnterPress(evt, i);
-    });
-  });
 
   /**
    * Нажать ESC в открытой галерее
@@ -120,5 +105,23 @@ window.gallery = (function () {
     buttonCloseGallery.removeEventListener('keydown', onCloseGalleryEnterPress);
     galleryPopup.removeEventListener('click', onGalleryOverlayClick);
     document.removeEventListener('keydown', onGalleryEscPress);
+  };
+
+  return function () {
+    var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
+
+    /**
+     * Навесить обработчики на все изображения галереи
+     * @param {Element} picture - изображерие
+     * @param {number} i - индекс изображения в массиве
+     */
+    pictures.forEach(function (picture, i) {
+      picture.addEventListener('click', function (evt) {
+        onPictureClick(evt, i);
+      });
+      picture.addEventListener('keydown', function (evt) {
+        onPictureEnterPress(evt, i);
+      });
+    });
   };
 })();

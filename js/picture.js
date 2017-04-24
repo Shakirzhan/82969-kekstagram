@@ -5,6 +5,12 @@ window.picture = (function () {
   var pictureList = document.querySelector('.pictures');
 
   /**
+  * Url сервера для загрузки данных
+  * @constant {string}
+   */
+  var LOAD_URL = 'https://intensive-javascript-server-kjgvxfepjl.now.sh/kekstagram/data';
+
+  /**
    * Создать HTML-блок с изображением
    * @param {Object} picture - фотография
    * @return {DocumentFragment} - HTML-блок с фотографией
@@ -37,6 +43,15 @@ window.picture = (function () {
     return fragmentPhotos;
   };
 
-  window.photos = window.data.generatePhotos(window.data.countPhotos, window.data.comments);
-  pictureList.appendChild(generateFragmentPhotos(window.photos));
+  /**
+   * Обработать полученные данные
+   * @param  {Array} photos - массив фотографий
+   */
+  var loadPhotos = function (photos) {
+    window.photos = photos;
+    pictureList.appendChild(generateFragmentPhotos(photos));
+    window.gallery();
+  };
+
+  window.load(LOAD_URL, loadPhotos);
 })();

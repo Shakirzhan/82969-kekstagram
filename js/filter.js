@@ -1,26 +1,15 @@
 'use strict';
 
 window.filter = (function () {
-  var filterControls = window.form.cropForm.querySelector('.upload-filter-controls');
+  var filterControls = document.querySelector('.upload-filter-controls');
 
-  /**
-   * Событие изменения фильтра
-   * @param {null} _
-   * @param {Function} callback
-   */
-  var addFilterListener = function (_, callback) {
-    filterControls.addEventListener('change', function (evt) {
-      callback(evt.target.value);
-    });
-  };
-
-  /**
-   * Валидация фильтров изображения
-   * @return {boolean}
-   */
   return {
+    /**
+     * Валидация фильтров изображения
+     * @return {boolean}
+     */
     valid: function () {
-      var filter = window.form.cropForm.querySelector('[name="upload-filter"]:checked');
+      var filter = document.querySelector('[name="upload-filter"]:checked');
 
       if (filter) {
         window.utils.removeError(filterControls);
@@ -30,6 +19,14 @@ window.filter = (function () {
         return false;
       }
     },
-    addFilterListener: addFilterListener,
+    /**
+     * Событие изменения фильтра
+     * @param {Function} callback
+     */
+    addFilterListener: function (callback) {
+      filterControls.addEventListener('change', function (evt) {
+        callback(evt.target.value);
+      });
+    }
   };
 })();
