@@ -115,15 +115,7 @@ window.upload = (function () {
     }
   };
 
-  /**
-   * Сбросить форму загрузки файла
-   */
-  var resetUploadForm = function () {
-    uploadForm.reset();
-  };
-
   uploadFormFile.addEventListener('change', onUploadFormFileChange);
-  window.form.cropForm.addEventListener('closecropform', resetUploadForm);
 
   return {
     uploadForm: uploadForm

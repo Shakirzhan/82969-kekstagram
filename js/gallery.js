@@ -3,7 +3,6 @@
 window.gallery = (function () {
   var galleryPopup = document.querySelector('.gallery-overlay');
   var buttonCloseGallery = galleryPopup.querySelector('.gallery-overlay-close');
-  var photosGallery;
 
   /**
    * Отрисовать шаблон комментария
@@ -26,28 +25,6 @@ window.gallery = (function () {
     imageGallery.setAttribute('src', picture.url);
     likesCount.textContent = picture.likes;
     commentsCount.innerHTML = renderComment(picture.comments.length);
-  };
-
-  /**
-   * Нажать на изображение
-   * @param {MouseEvent} evt - событие
-   * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
-   */
-  var onPictureClick = function (evt, i) {
-    evt.preventDefault();
-    openGallery(i);
-  };
-
-  /**
-   * Нажать ENTER на изображении
-   * @param {KeyboardEvent} evt - событие
-   * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
-   */
-  var onPictureEnterPress = function (evt, i) {
-    if (window.utils.isEnterKeyPress(evt)) {
-      evt.preventDefault();
-      openGallery(i);
-    }
   };
 
   /**
@@ -84,20 +61,6 @@ window.gallery = (function () {
   };
 
   /**
-   * Открыть галерею, отрисовать изображение, навесить обработчики событий
-   * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
-   */
-  var openGallery = function (i) {
-    renderGalleryItem(photosGallery[i]);
-    window.utils.showElement(galleryPopup);
-    buttonCloseGallery.focus();
-    buttonCloseGallery.addEventListener('click', closeGallery);
-    buttonCloseGallery.addEventListener('keydown', onCloseGalleryEnterPress);
-    galleryPopup.addEventListener('click', onGalleryOverlayClick);
-    document.addEventListener('keydown', onGalleryEscPress);
-  };
-
-  /**
    * Закрыть галерею, снять обработчики событий
    */
   var closeGallery = function () {
@@ -108,26 +71,19 @@ window.gallery = (function () {
     document.removeEventListener('keydown', onGalleryEscPress);
   };
 
-  /**
-   * Получить данные, подвесить обработчики событий на картинки
-   * @param {Array} photos - массив объектов для галереи
-   */
-  return function (photos) {
-    var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
-    photosGallery = photos;
-
+  return {
     /**
-     * Навесить обработчики на все изображения галереи
-     * @param {Element} picture - изображерие
-     * @param {number} i - индекс изображения в массиве
+     * Открыть галерею, отрисовать изображение, навесить обработчики событий
+     * @param {number} image - изображение
      */
-    pictures.forEach(function (picture, i) {
-      picture.addEventListener('click', function (evt) {
-        onPictureClick(evt, i);
-      });
-      picture.addEventListener('keydown', function (evt) {
-        onPictureEnterPress(evt, i);
-      });
-    });
+    openGallery: function (image) {
+      renderGalleryItem(image);
+      window.utils.showElement(galleryPopup);
+      buttonCloseGallery.focus();
+      buttonCloseGallery.addEventListener('click', closeGallery);
+      buttonCloseGallery.addEventListener('keydown', onCloseGalleryEnterPress);
+      galleryPopup.addEventListener('click', onGalleryOverlayClick);
+      document.addEventListener('keydown', onGalleryEscPress);
+    }
   };
 })();

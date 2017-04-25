@@ -25,7 +25,9 @@ window.filter = (function () {
      */
     addFilterListener: function (callback) {
       filterControls.addEventListener('change', function (evt) {
-        callback(evt.target.value);
+        if (typeof callback === 'function') {
+          callback(evt.target.value);
+        }
       });
     }
   };

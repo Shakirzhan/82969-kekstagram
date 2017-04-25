@@ -90,8 +90,25 @@ window.form = (function () {
   var applyFilter = function (value) {
     previewImage.classList.remove('filter-' + activeFilter.value);
     previewImage.classList.add('filter-' + value);
-    activeFilter = window.form.cropForm.querySelector('#upload-filter-' + value);
-    window.slider(value);
+    activeFilter = cropForm.querySelector('#upload-filter-' + value);
+    window.slider.toggleSlider(value, applyFilterImage);
+  };
+
+  /**
+   * Установить фильтр на изображении
+   * @param {number} value - вычисленное значение слайдера
+   */
+  var applyFilterImage = function (value) {
+    var filter = {
+      'chrome': 'grayscale(' + (value / 100).toFixed(2) + ')',
+      'sepia': 'sepia(' + (value / 100).toFixed(2) + ')',
+      'marvin': 'invert(' + value + '%)',
+      'phobos': 'blur(' + (3 * value / 100).toFixed(2) + 'px)',
+      'heat': 'brightness(' + (3 * value / 100).toFixed(2) + ')',
+      'none': ''
+    };
+
+    previewImage.style.filter = filter[activeFilter.value];
   };
 
   /**
@@ -123,6 +140,7 @@ window.form = (function () {
     resetFilter();
     resetResize();
     clearTextComment();
+    window.upload.uploadForm.reset();
   };
 
   /**
@@ -154,6 +172,7 @@ window.form = (function () {
   window.utils.hideElement(cropForm);
   window.filter.addFilterListener(applyFilter);
   window.resize.addResizeListener(applyResize);
+  window.slider.addSliderListener(applyFilterImage);
 
   return {
     cropForm: cropForm,

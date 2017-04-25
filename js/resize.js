@@ -48,7 +48,7 @@ window.resize = (function () {
       }
     },
     /**
-     * Событие изменения масштаба
+     * События изменения масштаба
      * @param {Function} callback
      */
     addResizeListener: function (callback) {
@@ -59,7 +59,9 @@ window.resize = (function () {
         var resizeValue = getResizeValue();
         if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
           resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
-          callback(parseInt(resizeInput.value, 10));
+          if (typeof callback === 'function') {
+            callback(parseInt(resizeInput.value, 10));
+          }
         }
       });
       /**
@@ -69,7 +71,9 @@ window.resize = (function () {
         var resizeValue = getResizeValue();
         if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
           resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
-          callback(parseInt(resizeInput.value, 10));
+          if (typeof callback === 'function') {
+            callback(parseInt(resizeInput.value, 10));
+          }
         }
       });
     }

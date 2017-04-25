@@ -1,13 +1,12 @@
 'use strict';
 
 window.slider = (function () {
-  var slider = window.form.cropForm.querySelector('.upload-filter-level');
-  var sliderLine = window.form.cropForm.querySelector('.upload-filter-level-line');
-  var sliderHandle = window.form.cropForm.querySelector('.upload-filter-level-pin');
-  var sliderValue = window.form.cropForm.querySelector('.upload-filter-level-val');
-  var previewImage = document.querySelector('.filter-image-preview');
-  var activeFilterValue;
+  var slider = document.querySelector('.upload-filter-level');
+  var sliderLine = document.querySelector('.upload-filter-level-line');
+  var sliderHandle = document.querySelector('.upload-filter-level-pin');
+  var sliderValue = document.querySelector('.upload-filter-level-val');
   var startCoordX;
+  var sliderCb = null;
 
   /**
    * Рассчитать значение для фильтра
@@ -21,6 +20,7 @@ window.slider = (function () {
   /**
    * Настроить слайдер в выбранное положение
    * @param {number} value - значение ползунка слайдера
+   * @return {number}
    */
   var setSliderValue = function (value) {
     if (value < 0) {
@@ -31,35 +31,8 @@ window.slider = (function () {
 
     sliderHandle.style.left = value + 'px';
     sliderValue.style.width = calcValueSlider(value) + '%';
-    setFilterImage(calcValueSlider(value));
-  };
 
-  /**
-   * Установить фильтр на изображении
-   * @param {number} value - вычисленное значение слайдера
-   */
-  var setFilterImage = function (value) {
-    var filter = {
-      'chrome': 'grayscale(' + (value / 100).toFixed(2) + ')',
-      'sepia': 'sepia(' + (value / 100).toFixed(2) + ')',
-      'marvin': 'invert(' + value + '%)',
-      'phobos': 'blur(' + (3 * value / 100).toFixed(2) + 'px)',
-      'heat': 'brightness(' + (3 * value / 100).toFixed(2) + ')',
-      'none': ''
-    };
-
-    previewImage.style.filter = filter[activeFilterValue];
-  };
-
-  /**
-   * Нажать на полосу слайдера
-   * @param {MouseEvent} evt
-   */
-  var onSliderClick = function (evt) {
-    if (!evt.target.classList.contains('upload-filter-level-pin')) {
-      evt.preventDefault();
-      setSliderValue(evt.offsetX);
-    }
+    return calcValueSlider(value);
   };
 
   /**
@@ -74,6 +47,9 @@ window.slider = (function () {
     startCoordX = mouseMoveEvt.clientX;
 
     setSliderValue(valueSlider);
+    if (typeof sliderCb === 'function') {
+      sliderCb(valueSlider);
+    }
   };
 
   /**
@@ -99,22 +75,47 @@ window.slider = (function () {
     document.addEventListener('mouseup', onMouseUp);
   };
 
-  sliderHandle.addEventListener('mousedown', onSliderHandleMouseDown);
-  slider.addEventListener('click', onSliderClick);
+  /**
+   * Нажать на полосу слайдера
+   * @param {MouseEvent} evt
+   */
+  var onSliderClick = function (evt) {
+    if (!evt.target.classList.contains('upload-filter-level-pin')) {
+      evt.preventDefault();
+      setSliderValue(evt.offsetX);
+      if (typeof sliderCb === 'function') {
+        sliderCb(setSliderValue(evt.offsetX));
+      }
+    }
+  };
+
   window.utils.hideElement(slider);
 
-  /**
-   * Показать/скрыть слайдер, на основе выбранного фильтра
-   * @param {string} value - выбранное значение фильтра
-   */
-  return function (value) {
-    activeFilterValue = value;
-
-    if (activeFilterValue === 'none') {
-      window.utils.hideElement(slider);
-    } else {
-      window.utils.showElement(slider);
+  return {
+    /**
+     * Показать/скрыть слайдер, на основе выбранного фильтра
+     * @param {string} value - выбранное значение фильтра
+     * @param {Function} callback
+     */
+    toggleSlider: function (value, callback) {
+      if (value === 'none') {
+        window.utils.hideElement(slider);
+      } else {
+        window.utils.showElement(slider);
+      }
+      setSliderValue(sliderLine.clientWidth);
+      if (typeof callback === 'function') {
+        callback(setSliderValue(sliderLine.clientWidth));
+      }
+    },
+    /**
+     * События изменения слайдера
+     * @param {Function} callback
+     */
+    addSliderListener: function (callback) {
+      sliderCb = callback;
+      sliderHandle.addEventListener('mousedown', onSliderHandleMouseDown);
+      slider.addEventListener('click', onSliderClick);
     }
-    setSliderValue(sliderLine.clientWidth);
   };
 })();
