@@ -39,7 +39,7 @@ window.gallery = (function () {
   };
 
   /**
-   * Нажать ENTER на кнопке закрытия гялереи
+   * Нажать ENTER на кнопке закрытия галереи
    * @param {KeyboardEvent} evt - событие
    */
   var onCloseGalleryEnterPress = function (evt) {

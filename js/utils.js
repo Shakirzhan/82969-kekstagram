@@ -2,6 +2,7 @@
 
 window.utils = (function () {
   var uploadFormLabel = document.querySelector('.upload-file');
+  var timeout;
 
   /**
    * Код клавиши ESC
@@ -14,6 +15,12 @@ window.utils = (function () {
   * @constant {number}
    */
   var ENTER_KEY_CODE = 13;
+
+  /**
+  * Задержка вызова функции
+  * @constant {number}
+   */
+  var DEBOUNCE_TIMER = 500;
 
   return {
     /**
@@ -118,6 +125,17 @@ window.utils = (function () {
      */
     removeError: function (el) {
       el.classList.remove('m-error');
+    },
+
+    /**
+    * Задержка вызова функции
+    * @param {Function} fun
+     */
+    debounce: function (fun) {
+      if (timeout) {
+        window.clearTimeout(timeout);
+      }
+      timeout = window.setTimeout(fun, DEBOUNCE_TIMER);
     }
   };
 })();

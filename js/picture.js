@@ -47,29 +47,30 @@ window.picture = (function () {
   /**
    * Нажать на изображение
    * @param {MouseEvent} evt - событие
-   * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
+   * @param {Object} img - изображение, которое необходимо отрисовать в галерее
    */
-  var onPictureClick = function (evt, i) {
+  var onPictureClick = function (evt, img) {
     evt.preventDefault();
-    window.gallery.openGallery(loadPictures[i]);
+    window.gallery.openGallery(img);
   };
 
   /**
    * Нажать ENTER на изображении
    * @param {KeyboardEvent} evt - событие
-   * @param {number} i - индекс изображения, которое необходимо отрисовать в галерее
+   * @param {Object} img - изображение, которое необходимо отрисовать в галерее
    */
-  var onPictureEnterPress = function (evt, i) {
+  var onPictureEnterPress = function (evt, img) {
     if (window.utils.isEnterKeyPress(evt)) {
       evt.preventDefault();
-      window.gallery.openGallery(loadPictures[i]);
+      window.gallery.openGallery(img);
     }
   };
 
   /**
   * Навесить обработчики на все изображения галереи
-   */
-  var addPicturesListener = function () {
+  * @param {Array} array - массив изображений
+  */
+  var addPicturesListener = function (array) {
     var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
 
     /**
@@ -78,10 +79,10 @@ window.picture = (function () {
      */
     pictures.forEach(function (picture, i) {
       picture.addEventListener('click', function (evt) {
-        onPictureClick(evt, i);
+        onPictureClick(evt, array[i]);
       });
       picture.addEventListener('keydown', function (evt) {
-        onPictureEnterPress(evt, i);
+        onPictureEnterPress(evt, array[i]);
       });
     });
   };
@@ -92,8 +93,19 @@ window.picture = (function () {
    */
   var loadPhotos = function (photos) {
     loadPictures = photos;
-    pictureList.appendChild(generateFragmentPhotos(loadPictures));
-    addPicturesListener();
+    renderPhotos(loadPictures);
+    window.filterData.filterDataListener(loadPictures, renderPhotos);
+    window.filterData.filters.classList.remove('hidden');
+  };
+
+  /**
+   * Отрисовать данные, навесть обработчики событий
+   * @param  {Array} array - массив фотографий
+   */
+  var renderPhotos = function (array) {
+    pictureList.innerHTML = '';
+    pictureList.appendChild(generateFragmentPhotos(array));
+    addPicturesListener(array);
   };
 
   window.load(LOAD_URL, loadPhotos);
