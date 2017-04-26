@@ -1,9 +1,9 @@
 'use strict';
 
 window.resize = (function () {
-  var resizeButtonDec = window.form.cropForm.querySelector('.upload-resize-controls-button-dec');
-  var resizeButtonInc = window.form.cropForm.querySelector('.upload-resize-controls-button-inc');
-  var resizeInput = window.form.cropForm.querySelector('.upload-resize-controls-value');
+  var resizeButtonDec = document.querySelector('.upload-resize-controls-button-dec');
+  var resizeButtonInc = document.querySelector('.upload-resize-controls-button-inc');
+  var resizeInput = document.querySelector('.upload-resize-controls-value');
 
   /**
   * Минимальное значение масштаба изображения
@@ -31,47 +31,6 @@ window.resize = (function () {
     return parseInt(resizeInput.value, 10);
   };
 
-  /**
-   * Нажать на уменьшение масштаба
-   */
-  var onResizeButtonDecClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
-      resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue - STEP_RESIZE);
-    }
-  };
-
-  /**
-   * Нажать на увеличение масштаба
-   */
-  var onResizeButtonIncClick = function () {
-    var resizeValue = getResizeValue();
-    if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
-      resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
-      changeScaleOnImage(resizeValue + STEP_RESIZE);
-    }
-  };
-
-  /**
-   * Изменить масштаб у изображения
-   * @param  {number} value - масштаб
-   */
-  var changeScaleOnImage = function (value) {
-    window.preview.image.style.transform = 'scale(' + (value / 100).toFixed(2) + ')';
-  };
-
-  /**
-   * Установить в масштабе значение по умолчанию
-   */
-  var resetResize = function () {
-    changeScaleOnImage(MAX_RESIZE);
-  };
-
-  resizeButtonDec.addEventListener('click', onResizeButtonDecClick);
-  resizeButtonInc.addEventListener('click', onResizeButtonIncClick);
-  window.form.cropForm.addEventListener('closecropform', resetResize);
-
   return {
     /**
      * Валидация масштаба
@@ -87,6 +46,36 @@ window.resize = (function () {
         window.utils.addError(resizeInput);
         return false;
       }
+    },
+    /**
+     * События изменения масштаба
+     * @param {Function} callback
+     */
+    addResizeListener: function (callback) {
+      /**
+       * Нажать на увеличение масштаба
+       */
+      resizeButtonDec.addEventListener('click', function () {
+        var resizeValue = getResizeValue();
+        if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
+          resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
+          if (typeof callback === 'function') {
+            callback(parseInt(resizeInput.value, 10));
+          }
+        }
+      });
+      /**
+       * Нажать на уменьшение масштаба
+       */
+      resizeButtonInc.addEventListener('click', function () {
+        var resizeValue = getResizeValue();
+        if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
+          resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
+          if (typeof callback === 'function') {
+            callback(parseInt(resizeInput.value, 10));
+          }
+        }
+      });
     }
   };
 })();

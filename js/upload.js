@@ -4,6 +4,7 @@ window.upload = (function () {
   var uploadForm = document.querySelector('#upload-select-image');
   var uploadFormFile = document.querySelector('#upload-file');
   var dropZone = document.querySelector('#upload-select-image');
+  var previewImage = document.querySelector('.filter-image-preview');
 
   /**
   * Разрешенные расширения файла
@@ -81,7 +82,7 @@ window.upload = (function () {
    */
   var onLoadFile = function (evt) {
     window.utils.hidePreloader();
-    window.preview.image.src = evt.target.result;
+    previewImage.src = evt.target.result;
     window.form.openCropForm();
   };
 
@@ -114,15 +115,7 @@ window.upload = (function () {
     }
   };
 
-  /**
-   * Сбросить форму загрузки файла
-   */
-  var resetUploadForm = function () {
-    uploadForm.reset();
-  };
-
   uploadFormFile.addEventListener('change', onUploadFormFileChange);
-  window.form.cropForm.addEventListener('closecropform', resetUploadForm);
 
   return {
     uploadForm: uploadForm
