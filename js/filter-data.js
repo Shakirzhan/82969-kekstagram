@@ -54,13 +54,12 @@ window.filterData = (function () {
 
   /**
   * Изменение фильтра
-  * @param {Event} evt
+  * @param {String} value - новое значение фильтра
   */
-  var onFilterButtonChange = function (evt) {
-    var filterValue = evt.target.value;
+  var onFilterButtonChange = function (value) {
     var resultData = [];
 
-    switch (filterValue) {
+    switch (value) {
       case 'popular':
         resultData = popularData();
         break;
@@ -73,7 +72,7 @@ window.filterData = (function () {
     }
 
     if (typeof filterDataCallback === 'function') {
-      window.utils.debounce(filterDataCallback, resultData);
+      filterDataCallback(resultData);
     }
   };
 
@@ -87,7 +86,15 @@ window.filterData = (function () {
     filterDataListener: function (data, callback) {
       saveData = data;
       filterDataCallback = callback;
-      filters.addEventListener('change', onFilterButtonChange);
+      /**
+       * Событие изменения фильтра
+       * @param {Event} evt
+       */
+      filters.addEventListener('change', function (evt) {
+        window.utils.debounce(function () {
+          onFilterButtonChange(evt.target.value);
+        });
+      });
     }
   };
 })();

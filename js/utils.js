@@ -129,16 +129,13 @@ window.utils = (function () {
 
     /**
     * Задержка вызова функции
-    * @param {Function} cb
-    * @param {*} param
+    * @param {Function} callback
      */
-    debounce: function (cb, param) {
+    debounce: function (callback) {
       if (timeout) {
         window.clearTimeout(timeout);
       }
-      timeout = window.setTimeout(function () {
-        cb(param);
-      }, DEBOUNCE_TIMER);
+      timeout = window.setTimeout(callback, DEBOUNCE_TIMER);
     }
   };
 })();
