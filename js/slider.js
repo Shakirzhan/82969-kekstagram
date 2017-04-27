@@ -6,7 +6,7 @@ window.slider = (function () {
   var sliderHandle = document.querySelector('.upload-filter-level-pin');
   var sliderValue = document.querySelector('.upload-filter-level-val');
   var startCoordX;
-  var sliderCb = null;
+  var sliderCb;
 
   /**
    * Рассчитать значение для фильтра

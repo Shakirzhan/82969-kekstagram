@@ -24,6 +24,10 @@ window.filter = (function () {
      * @param {Function} callback
      */
     addFilterListener: function (callback) {
+      /**
+       * Изменение фильтра
+       * @param {Event} evt
+       */
       filterControls.addEventListener('change', function (evt) {
         if (typeof callback === 'function') {
           callback(evt.target.value);
