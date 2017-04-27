@@ -2,6 +2,12 @@
 
 window.load = (function () {
   /**
+  * Код успешного ответа от сервера
+  * @constant {number}
+   */
+  var SUCCESS_STATUS = 200;
+
+  /**
   * Время ожидания ответа от сервера
   * @constant {number}
    */
@@ -37,7 +43,7 @@ window.load = (function () {
    * Запуск загрузки данных с сервера
    */
   var onLoadStart = function () {
-    window.utils.showPreloader();
+    window.preloader.show();
   };
 
   /**
@@ -45,7 +51,7 @@ window.load = (function () {
    * @param {number} xhr - ответ сервера
    */
   var onLoadError = function (xhr) {
-    window.utils.hidePreloader();
+    window.preloader.hide();
     showLoadErrorMessage(xhr.status);
   };
 
@@ -53,7 +59,7 @@ window.load = (function () {
    * Ошибка при превышении времени ожидания ответа от сервера
    */
   var onLoadTimeout = function () {
-    window.utils.hidePreloader();
+    window.preloader.hide();
     showLoadErrorMessage(TIMEOUT_STATUS);
   };
 
@@ -64,6 +70,7 @@ window.load = (function () {
    */
   return function (url, onLoad) {
     var xhr = new XMLHttpRequest();
+
     xhr.responseType = 'json';
     xhr.open('GET', url, true);
     xhr.timeout = TIMEOUT;
@@ -72,13 +79,14 @@ window.load = (function () {
     xhr.addEventListener('error', onLoadError);
     xhr.addEventListener('timeout', onLoadTimeout);
     xhr.addEventListener('load', function () {
-      window.utils.hidePreloader();
-      if (xhr.status === 200) {
+      window.preloader.hide();
+      if (xhr.status === SUCCESS_STATUS) {
         onLoad(xhr.response);
       } else {
         showLoadErrorMessage(xhr.status);
       }
     });
+
     xhr.send();
   };
 })();

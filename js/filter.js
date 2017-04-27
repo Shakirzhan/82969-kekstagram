@@ -8,7 +8,7 @@ window.filter = (function () {
      * Валидация фильтров изображения
      * @return {boolean}
      */
-    valid: function () {
+    isValidity: function () {
       var filter = document.querySelector('[name="upload-filter"]:checked');
 
       if (filter) {

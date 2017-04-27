@@ -1,8 +1,8 @@
 'use strict';
 
 window.upload = (function () {
-  var uploadForm = document.querySelector('#upload-select-image');
-  var uploadFormFile = document.querySelector('#upload-file');
+  var form = document.querySelector('#upload-select-image');
+  var formFile = document.querySelector('#upload-file');
   var dropZone = document.querySelector('#upload-select-image');
   var previewImage = document.querySelector('.filter-image-preview');
 
@@ -44,19 +44,15 @@ window.upload = (function () {
    */
   var onDropZoneDrop = function (evt) {
     evt.preventDefault();
-    uploadImage(evt.dataTransfer.files[0]);
+    uploadFile(evt.dataTransfer.files[0]);
   };
-
-  dropZone.addEventListener('dragover', onDropZoneDragOver, false);
-  dropZone.addEventListener('dragleave', onDropZoneDragLeave, false);
-  dropZone.addEventListener('drop', onDropZoneDrop, false);
 
   /**
    * Проверить расширение файла
    * @param {File} file
    * @return {boolean}
    */
-  var checkFileExtension = function (file) {
+  var isCheckFileExtension = function (file) {
     var extension = file.name.split('.').pop();
     return extension in FILE_EXTENSION;
   };
@@ -65,14 +61,14 @@ window.upload = (function () {
    * Запуск процесса чтения файла
    */
   var onLoadStartFile = function () {
-    window.utils.showPreloader();
+    window.preloader.show();
   };
 
   /**
    * Ошибка при чтении файла
    */
   var onErrorFile = function () {
-    window.utils.hidePreloader();
+    window.preloader.hide();
     window.info.openModalInfo('Возникла ошибка при загрузке файла.');
   };
 
@@ -81,7 +77,7 @@ window.upload = (function () {
    * @param {ProgressEvent} evt
    */
   var onLoadFile = function (evt) {
-    window.utils.hidePreloader();
+    window.preloader.hide();
     previewImage.src = evt.target.result;
     window.form.openCropForm();
   };
@@ -90,16 +86,17 @@ window.upload = (function () {
    * Чтение содержимого файла
    * @param {File} file
    */
-  var uploadImage = function (file) {
+  var uploadFile = function (file) {
     dropZone.classList.remove('m-hover');
 
-    if (file && checkFileExtension(file)) {
+    if (isCheckFileExtension(file)) {
       var reader = new FileReader();
 
-      reader.readAsDataURL(file);
       reader.addEventListener('loadstart', onLoadStartFile);
       reader.addEventListener('error', onErrorFile);
       reader.addEventListener('load', onLoadFile);
+
+      reader.readAsDataURL(file);
     } else {
       window.openModalInfo('Файл имеет неподдерживаемый формат!');
     }
@@ -109,15 +106,18 @@ window.upload = (function () {
    * Изменить поле загрузки файла
    * @param  {Event} evt - событие
    */
-  var onUploadFormFileChange = function (evt) {
+  var onFormFileChange = function (evt) {
     if (evt.target.value !== '') {
-      uploadImage(evt.target.files[0]);
+      uploadFile(evt.target.files[0]);
     }
   };
 
-  uploadFormFile.addEventListener('change', onUploadFormFileChange);
+  dropZone.addEventListener('dragover', onDropZoneDragOver, false);
+  dropZone.addEventListener('dragleave', onDropZoneDragLeave, false);
+  dropZone.addEventListener('drop', onDropZoneDrop, false);
+  formFile.addEventListener('change', onFormFileChange);
 
   return {
-    uploadForm: uploadForm
+    form: form
   };
 })();

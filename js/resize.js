@@ -36,7 +36,7 @@ window.resize = (function () {
      * Валидация масштаба
      * @return {boolean}
      */
-    valid: function () {
+    isValidity: function () {
       var resizeValue = getResizeValue();
 
       if (resizeValue >= MIN_RESIZE && resizeValue <= MAX_RESIZE) {
@@ -57,10 +57,12 @@ window.resize = (function () {
        */
       resizeButtonDec.addEventListener('click', function () {
         var resizeValue = getResizeValue();
-        if ((resizeValue - STEP_RESIZE) >= MIN_RESIZE) {
-          resizeInput.value = +(resizeValue - STEP_RESIZE) + '%';
+        var newValue = (resizeValue - STEP_RESIZE);
+
+        if (newValue >= MIN_RESIZE) {
+          resizeInput.value = +newValue + '%';
           if (typeof callback === 'function') {
-            callback(parseInt(resizeInput.value, 10));
+            callback(newValue);
           }
         }
       });
@@ -69,10 +71,12 @@ window.resize = (function () {
        */
       resizeButtonInc.addEventListener('click', function () {
         var resizeValue = getResizeValue();
-        if ((resizeValue + STEP_RESIZE) <= MAX_RESIZE) {
-          resizeInput.value = +(resizeValue + STEP_RESIZE) + '%';
+        var newValue = (resizeValue + STEP_RESIZE);
+
+        if (newValue <= MAX_RESIZE) {
+          resizeInput.value = +newValue + '%';
           if (typeof callback === 'function') {
-            callback(parseInt(resizeInput.value, 10));
+            callback(newValue);
           }
         }
       });
