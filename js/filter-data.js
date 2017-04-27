@@ -2,7 +2,6 @@
 
 window.filterData = (function () {
   var filters = document.querySelector('.filters');
-  var filterButtons = Array.prototype.slice.call(filters.querySelectorAll('.filters-radio'), 0);
   var filterDataCallback;
   var saveData;
 
@@ -14,25 +13,25 @@ window.filterData = (function () {
 
   /**
   * Фильтрация данных по параметру "Популярные"
+  * @return {Array}
   */
   var popularData = function () {
-    if (typeof filterDataCallback === 'function') {
-      filterDataCallback(saveData);
-    }
+    return saveData;
   };
 
   /**
   * Фильтрация данных по параметру "Новые"
+  * @return {Array}
   */
   var newData = function () {
     var copyArray = saveData.slice();
     var resultArray = [];
+
     for (var i = 0; i < NEW_DATA_COUNT; i++) {
       resultArray[i] = window.utils.getElementArray(copyArray, true);
     }
-    if (typeof filterDataCallback === 'function') {
-      filterDataCallback(resultArray);
-    }
+
+    return resultArray;
   };
 
   /**
@@ -42,39 +41,15 @@ window.filterData = (function () {
   * @return {number}
   */
   var ruleSort = function (a, b) {
-    var res;
-
-    /**
-     * Сравнение по количеству комментариев
-     */
-    if (a.comments.length > b.comments.length) {
-      res = 1;
-    } else if (a.comments.length < b.comments.length) {
-      res = -1;
-    } else {
-      /**
-       * Сравнение по количеству лайков
-       */
-      if (a.likes > b.likes) {
-        res = 1;
-      } else if (a.likes < b.likes) {
-        res = -1;
-      } else {
-        res = 0;
-      }
-    }
-
-    return res;
+    return a.comments.length - b.comments.length || a.likes - b.likes;
   };
 
   /**
   * Сортировка данных по параметру "Обсуждаемые"
+  * @return {Array}
   */
   var sortData = function () {
-    var copyArray = saveData.slice();
-    if (typeof filterDataCallback === 'function') {
-      filterDataCallback(copyArray.sort(ruleSort));
-    }
+    return saveData.slice().sort(ruleSort);
   };
 
   /**
@@ -83,13 +58,22 @@ window.filterData = (function () {
   */
   var onFilterButtonChange = function (evt) {
     var filterValue = evt.target.value;
+    var resultData = [];
 
-    if (filterValue === 'popular') {
-      window.utils.debounce(popularData);
-    } else if (filterValue === 'new') {
-      window.utils.debounce(newData);
-    } else if (filterValue === 'discussed') {
-      window.utils.debounce(sortData);
+    switch (filterValue) {
+      case 'popular':
+        resultData = popularData();
+        break;
+      case 'new':
+        resultData = newData();
+        break;
+      case 'discussed':
+        resultData = sortData();
+        break;
+    }
+
+    if (typeof filterDataCallback === 'function') {
+      window.utils.debounce(filterDataCallback, resultData);
     }
   };
 
@@ -102,14 +86,8 @@ window.filterData = (function () {
      */
     filterDataListener: function (data, callback) {
       saveData = data;
-      /**
-       * Изменение фильтра
-       * @param {Element} button - радио-кнопка
-       */
-      filterButtons.forEach(function (button) {
-        filterDataCallback = callback;
-        button.addEventListener('change', onFilterButtonChange);
-      });
+      filterDataCallback = callback;
+      filters.addEventListener('change', onFilterButtonChange);
     }
   };
 })();
