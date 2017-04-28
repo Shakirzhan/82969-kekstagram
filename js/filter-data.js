@@ -1,9 +1,15 @@
 'use strict';
 
 window.filterData = (function () {
-  var filters = document.querySelector('.filters');
+  var filtersElement = document.querySelector('.filters');
   var filterDataCallback;
   var saveData;
+
+  /**
+  * Задержка вызова функции
+  * @constant {number}
+   */
+  var DEBOUNCE_TIMER = 500;
 
   /**
   * Количество данных для фильтра "Новые"
@@ -36,12 +42,12 @@ window.filterData = (function () {
 
   /**
   * Правило сортировки по параметру "Обсуждаемые"
-  * @param {Object} a
-  * @param {Object} b
+  * @param {Object} left
+  * @param {Object} right
   * @return {number}
   */
-  var ruleSort = function (a, b) {
-    return a.comments.length - b.comments.length || a.likes - b.likes;
+  var ruleSort = function (left, right) {
+    return right.comments.length - left.comments.length || right.likes - left.likes;
   };
 
   /**
@@ -56,7 +62,7 @@ window.filterData = (function () {
   * Изменение фильтра
   * @param {String} value - новое значение фильтра
   */
-  var onFilterButtonChange = function (value) {
+  var onFiltersElementChange = function (value) {
     var resultData = [];
 
     switch (value) {
@@ -77,23 +83,23 @@ window.filterData = (function () {
   };
 
   return {
-    filters: filters,
+    filtersElement: filtersElement,
     /**
      * Событие изменения фильтра
      * @param {Array} data - исходный массив данных, загруженных с сервера
      * @param {Function} callback
      */
-    filterDataListener: function (data, callback) {
+    addFilterDataListener: function (data, callback) {
       saveData = data;
       filterDataCallback = callback;
       /**
        * Событие изменения фильтра
        * @param {Event} evt
        */
-      filters.addEventListener('change', function (evt) {
-        window.utils.debounce(function () {
-          onFilterButtonChange(evt.target.value);
-        });
+      filtersElement.addEventListener('change', function (evt) {
+        window.debounce(function () {
+          onFiltersElementChange(evt.target.value);
+        }, DEBOUNCE_TIMER);
       });
     }
   };

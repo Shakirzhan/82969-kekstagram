@@ -1,9 +1,6 @@
 'use strict';
 
 window.utils = (function () {
-  var uploadFormLabel = document.querySelector('.upload-file');
-  var timeout;
-
   /**
    * Код клавиши ESC
    * @constant {number}
@@ -15,12 +12,6 @@ window.utils = (function () {
   * @constant {number}
    */
   var ENTER_KEY_CODE = 13;
-
-  /**
-  * Задержка вызова функции
-  * @constant {number}
-   */
-  var DEBOUNCE_TIMER = 500;
 
   return {
     /**
@@ -98,20 +89,6 @@ window.utils = (function () {
     },
 
     /**
-     * Показать прелоадер
-     */
-    showPreloader: function () {
-      uploadFormLabel.classList.add('load-file');
-    },
-
-    /**
-     * Скрыть прелоадер
-     */
-    hidePreloader: function () {
-      uploadFormLabel.classList.remove('load-file');
-    },
-
-    /**
      * Добавить класс ошибки к элементу
      * @param {Element} el
      */
@@ -125,17 +102,6 @@ window.utils = (function () {
      */
     removeError: function (el) {
       el.classList.remove('m-error');
-    },
-
-    /**
-    * Задержка вызова функции
-    * @param {Function} callback
-     */
-    debounce: function (callback) {
-      if (timeout) {
-        window.clearTimeout(timeout);
-      }
-      timeout = window.setTimeout(callback, DEBOUNCE_TIMER);
     }
   };
 })();

@@ -3,9 +3,8 @@
 window.form = (function () {
   var cropForm = document.querySelector('.upload-overlay');
   var buttonCloseCropForm = cropForm.querySelector('.upload-form-cancel');
-  var submitCropForm = cropForm.querySelector('.upload-form-submit');
-  var imageComment = cropForm.querySelector('.upload-form-description');
-  var activeFilter = cropForm.querySelector('[name="upload-filter"]:checked');
+  var commentImage = cropForm.querySelector('.upload-form-description');
+  var activeEffect = cropForm.querySelector('[name="upload-filter"]:checked');
   var previewImage = document.querySelector('.filter-image-preview');
 
   /**
@@ -48,7 +47,7 @@ window.form = (function () {
    */
   var onSubmitCropForm = function (evt) {
     evt.preventDefault();
-    if (validCropForm()) {
+    if (isValidityCropForm()) {
       closeCropForm();
     }
   };
@@ -57,12 +56,12 @@ window.form = (function () {
    * Валидация поля комментария
    * @return {boolean}
    */
-  var validResizeComment = function () {
-    if (imageComment.validity.valid) {
-      window.utils.removeError(imageComment);
+  var isValidityCommentImage = function () {
+    if (commentImage.validity.valid) {
+      window.utils.removeError(commentImage);
       return true;
     } else {
-      window.utils.addError(imageComment);
+      window.utils.addError(commentImage);
       return false;
     }
   };
@@ -71,8 +70,8 @@ window.form = (function () {
    * Валидация формы кадрирования
    * @return {boolean}
    */
-  var validCropForm = function () {
-    return (window.resize.valid() && validResizeComment() && window.filter.valid());
+  var isValidityCropForm = function () {
+    return window.resize.isValidity() && window.filter.isValidity() && isValidityCommentImage();
   };
 
   /**
@@ -84,21 +83,23 @@ window.form = (function () {
   };
 
   /**
-   * Применить фильтр к изображению
+   * Применить эффект к изображению
    * @param {string} value - новое значение фильтра
    */
-  var applyFilter = function (value) {
-    previewImage.classList.remove('filter-' + activeFilter.value);
+  var applyEffect = function (value) {
+    var isVisibleSlider = value === 'none' ? true : false;
+
+    previewImage.classList.remove('filter-' + activeEffect.value);
     previewImage.classList.add('filter-' + value);
-    activeFilter = cropForm.querySelector('#upload-filter-' + value);
-    window.slider.toggleSlider(value, applyFilterImage);
+    activeEffect = cropForm.querySelector('#upload-filter-' + value);
+    window.slider.toggleSlider(isVisibleSlider, applyDepthEffect);
   };
 
   /**
-   * Установить фильтр на изображении
+   * Установить глубину эффекта
    * @param {number} value - вычисленное значение слайдера
    */
-  var applyFilterImage = function (value) {
+  var applyDepthEffect = function (value) {
     var filter = {
       'chrome': 'grayscale(' + (value / 100).toFixed(2) + ')',
       'sepia': 'sepia(' + (value / 100).toFixed(2) + ')',
@@ -108,47 +109,48 @@ window.form = (function () {
       'none': ''
     };
 
-    previewImage.style.filter = filter[activeFilter.value];
+    previewImage.style.filter = filter[activeEffect.value];
   };
 
   /**
-   * Установить в масштабе значение по умолчанию
+   * Сбросить масштаб изображения
    */
   var resetResize = function () {
     applyResize(DEFAULT_RESIZE);
   };
 
   /**
-   * Установить в фильтре значение по умолчанию
+   * Сбросить эффект изображения
    */
-  var resetFilter = function () {
-    applyFilter(DEFAULT_FILTER);
+  var resetEffect = function () {
+    applyEffect(DEFAULT_FILTER);
   };
 
   /**
    * Очистить поле комментария, снять сообщение об ошибке
    */
-  var clearTextComment = function () {
-    imageComment.value = '';
-    window.utils.removeError(imageComment);
+  var clearCommentImage = function () {
+    commentImage.value = '';
+    window.utils.removeError(commentImage);
   };
 
   /**
    * Сбросить форму кадрирования
    */
   var resetCropForm = function () {
-    resetFilter();
+    resetEffect();
     resetResize();
-    clearTextComment();
-    window.upload.uploadForm.reset();
+    clearCommentImage();
+    window.upload.form.reset();
   };
 
   /**
    * Открыть форму кадрирования, навесить обработчики событий
    */
   var openCropForm = function () {
+    window.slider.toggleSlider(true);
     window.utils.showElement(cropForm);
-    window.utils.hideElement(window.upload.uploadForm);
+    window.utils.hideElement(window.upload.form);
     buttonCloseCropForm.focus();
     buttonCloseCropForm.addEventListener('click', closeCropForm);
     buttonCloseCropForm.addEventListener('keydown', onButtonCloseCropFormEnterPress);
@@ -161,18 +163,18 @@ window.form = (function () {
    */
   var closeCropForm = function () {
     window.utils.hideElement(cropForm);
-    window.utils.showElement(window.upload.uploadForm);
+    window.utils.showElement(window.upload.form);
     resetCropForm();
     buttonCloseCropForm.removeEventListener('click', closeCropForm);
     buttonCloseCropForm.removeEventListener('keydown', onButtonCloseCropFormEnterPress);
     document.removeEventListener('keydown', onCropFormEscPress);
-    submitCropForm.removeEventListener('submit', onSubmitCropForm);
+    cropForm.removeEventListener('submit', onSubmitCropForm);
   };
 
   window.utils.hideElement(cropForm);
-  window.filter.addFilterListener(applyFilter);
+  window.filter.addFilterListener(applyEffect);
+  window.slider.addSliderListener(applyDepthEffect);
   window.resize.addResizeListener(applyResize);
-  window.slider.addSliderListener(applyFilterImage);
 
   return {
     cropForm: cropForm,

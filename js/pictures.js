@@ -1,9 +1,9 @@
 'use strict';
 
-window.picture = (function () {
+(function () {
   var pictureTemplate = document.querySelector('#picture-template').content;
   var pictureList = document.querySelector('.pictures');
-  var loadPictures;
+  var pictures;
 
   /**
   * Url сервера для загрузки данных
@@ -34,14 +34,14 @@ window.picture = (function () {
    * @param {Array} photos - массив фотографий
    * @return {DocumentFragment} - фрагмент фотографий
    */
-  var generateFragmentPhotos = function (photos) {
-    var fragmentPhotos = document.createDocumentFragment();
+  var generateFragmentPictures = function (photos) {
+    var fragmentPictures = document.createDocumentFragment();
 
     for (var i = 0; i < photos.length; i++) {
-      fragmentPhotos.appendChild(createPictureItem(photos[i]));
+      fragmentPictures.appendChild(createPictureItem(photos[i]));
     }
 
-    return fragmentPhotos;
+    return fragmentPictures;
   };
 
   /**
@@ -71,13 +71,13 @@ window.picture = (function () {
   * @param {Array} array - массив изображений
   */
   var addPicturesListener = function (array) {
-    var pictures = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
+    var pictureElements = Array.prototype.slice.call(document.querySelectorAll('.picture'), 0);
 
     /**
      * @param {Element} picture - изображерие
      * @param {number} i - индекс изображения в массиве
      */
-    pictures.forEach(function (picture, i) {
+    pictureElements.forEach(function (picture, i) {
       picture.addEventListener('click', function (evt) {
         onPictureClick(evt, array[i]);
       });
@@ -88,25 +88,25 @@ window.picture = (function () {
   };
 
   /**
-   * Обработать полученные данные
-   * @param  {Array} photos - массив фотографий
+   * Отрисовать данные, навесить обработчики событий
+   * @param {Array} array - массив фотографий
    */
-  var loadPhotos = function (photos) {
-    loadPictures = photos;
-    renderPhotos(loadPictures);
-    window.filterData.filterDataListener(loadPictures, renderPhotos);
-    window.filterData.filters.classList.remove('hidden');
-  };
-
-  /**
-   * Отрисовать данные, навесть обработчики событий
-   * @param  {Array} array - массив фотографий
-   */
-  var renderPhotos = function (array) {
+  var renderPictures = function (array) {
     pictureList.innerHTML = '';
-    pictureList.appendChild(generateFragmentPhotos(array));
+    pictureList.appendChild(generateFragmentPictures(array));
     addPicturesListener(array);
   };
 
-  window.load(LOAD_URL, loadPhotos);
+  /**
+   * Получить данные
+   * @param {Array} data - массив фотографий
+   */
+  var getPicuresData = function (data) {
+    pictures = data;
+    renderPictures(pictures);
+    window.filterData.addFilterDataListener(pictures, renderPictures);
+    window.filterData.filtersElement.classList.remove('hidden');
+  };
+
+  window.load(LOAD_URL, getPicuresData);
 })();
